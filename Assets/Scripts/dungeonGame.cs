@@ -36,6 +36,7 @@ public class dungeonGame : MonoBehaviour
         int roomCount = 0;
         int attackRoll = 0;
         int currentRoom = -1;
+        int openInvSlot = -1;
 
         string[] roomNames = 
         {   
@@ -65,6 +66,8 @@ public class dungeonGame : MonoBehaviour
             "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
         };
 
+        string[] inventory = { "", "", "", "", "", "" }; //inventory can contain rusted sword, polished sword, key, rope, torch, and cloak
+
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
         Debug.Log("Map of the dungeon:");
@@ -86,7 +89,15 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("A torch flickers on the wall. A stone doorway leads north.");
         Debug.Log("You take the torch. With the light it casts, you feel you can move a bit quicker.");
-        agility += 1;
+        openInvSlot += 1;
+        inventory[openInvSlot] += "torch";
+        foreach (string itemCheck in inventory)
+        {
+            if (itemCheck == "torch")
+            {
+                agility += 1;
+            }
+        }
         Debug.Log("Your agility increases to " + agility);
         Debug.Log("You move into the next room.");
 
@@ -109,7 +120,15 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("A rusty sword rests on a table. A goblin snores in the corner.");
         Debug.Log("The goblin jolts awake, and seeing you, makes to charge you. You snatch up the sword in a panic and prepare to defend yourself.");
-        attack += 1;
+        openInvSlot += 1;
+        inventory[openInvSlot] += "rusted shortsword";
+        foreach (string itemCheck in inventory)
+        {
+            if (itemCheck == "rusted shortsword")
+            {
+                attack += 1;
+            }
+        }
         Debug.Log("Your attack increases to " + attack);
 
         Debug.Log("The goblin lunges at you!");
@@ -508,6 +527,7 @@ public class dungeonGame : MonoBehaviour
         // TODO A1: FIX THE BROKEN ROOM below. It has bugs that stops the program
         //          from running. Un-comment the lines, find the bug(s), fix it,
         //          and add a // comment saying what was wrong.
+
         Debug.Log("");
         //Debug.Log("The Flooded Passage"); // line missing closing semi-colon
         currentRoom += 1;
@@ -521,8 +541,9 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("Ankle-deep water fills the hall. A broken door is at the end of the hallway.");
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
-        hasKey = true;
-        Debug.Log("hasKey:" + hasKey);
+        openInvSlot += 1;
+        inventory[openInvSlot] += "key";
+        
         Debug.Log("You move into the next room.");
 
         int gold = 15;
@@ -564,11 +585,30 @@ public class dungeonGame : MonoBehaviour
             hasKey = false;
             Debug.Log("haskey: " + hasKey);
             Debug.Log("You open the chest, revealing a polished shortsword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
-            attack += 1;
-            Debug.Log("Your attack has increased to " + attack + ".");
-            defense += 1;
+            openInvSlot += 1;
+            inventory[openInvSlot] += "polished shortsword";
+            foreach (string itemCheck in inventory)
+            {
+                if (name == "polished shortsword")
+                {
+                    attack += 1;
+                }
+            }
+            Debug.Log("You put the polished shortsword in your belt, increasing your attack to " + attack + ".");
+
+            openInvSlot += 1;
+            inventory[openInvSlot] += "cloak";
+            foreach (string itemCheck in inventory)
+            {
+                if (itemCheck == "cloak")
+                {
+                    defense += 1;
+                }
+            }
             Debug.Log("You don the cloak, and your defense increases to " + defense + ".");
-            hasRope = true;
+            
+            openInvSlot += 1;
+            inventory[openInvSlot] += "rope";
             Debug.Log("You put the rope over one shoulder like a sash for safekeeping.");
             Debug.Log("hasRope: " + hasRope);
         }
