@@ -36,6 +36,34 @@ public class dungeonGame : MonoBehaviour
         int roomCount = 0;
         int attackRoll = 0;
 
+        string[] roomNames = 
+        {   
+            "The Entrance Hall",
+            "The Guard Room",
+            "The Troll Cave",
+            "The Mess Hall",
+            "The Barracks",
+            "The Flooded Passage",
+            "The Treasure Room",
+            "The Armory",
+            "The Merchant's Room",
+            "The Broken Throneroom",
+        };
+
+        string[] roomDescsriptions = 
+        {   
+            "A torch flickers on the wall. A stone doorway leads north.",
+            "A rusty sword rests on a table. A goblin snores in the corner.",
+            "You walk into a large cave littered with bones.",
+            "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
+            "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
+            "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
+            "It seems this room has been raided. You find " + 5000 + " gold.",
+            "This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.",
+            "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
+            "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
+        };
+
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
         Debug.Log("");
@@ -89,13 +117,11 @@ public class dungeonGame : MonoBehaviour
                 {
                     Debug.Log("The goblin crits!");
                     health -= ((goblinAttack*2) - defense);
-                    Debug.Log("You have " + health + " HP!");
                 }
                 else
                 {
                     Debug.Log("The goblin hits!");
                     health -= (goblinAttack - defense);
-                    Debug.Log("You have " + health + " HP!");
                 }
             }
             else
@@ -103,17 +129,19 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("The goblin misses...");
             }
 
+            Debug.Log("You have " + health + " HP!");
+
             if (health <= 0)
             {
                 Debug.Log("You collapse to your sustained wounds");
                 playerAlive = false;
                 break;
             }
-            else if (health <= 5)
+            else if (health <= (maxHealth / 4))
             {
                 Debug.Log("You are badly wounded");
             }
-            else if (health < 20)
+            else if (health < maxHealth)
             {
                 Debug.Log("You are wounded, but carry on");
             }
@@ -128,13 +156,11 @@ public class dungeonGame : MonoBehaviour
                 {
                     Debug.Log("You crit!");
                     goblinHealth -= ((attack * 2) - goblinDefense);
-                    Debug.Log("The goblin has " + goblinHealth + " HP!");
                 }
                 else
                 {
                     Debug.Log("You hit!");
                     goblinHealth -= (attack - goblinDefense);
-                    Debug.Log("The goblin has " + goblinHealth + " HP!");
                 }
                 if(goblinHealth <= 0)
                 {
@@ -146,6 +172,9 @@ public class dungeonGame : MonoBehaviour
             {
                 Debug.Log("You miss...");
             }
+
+            Debug.Log("The goblin has " + goblinHealth + " HP!");
+
         }
 
         if(playerAlive == false)
@@ -156,6 +185,7 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("You move to the next room.");
 
+        Debug.Log("The Troll Cave");
         Debug.Log("You walk into a large cave littered with bones.");
 
         roomCount += 1;
@@ -192,19 +222,19 @@ public class dungeonGame : MonoBehaviour
                     {
                         Debug.Log("The ogre crits!");
                         health -= ((ogreAttack * 2) - defense);
-                        Debug.Log("You have " + health + " HP!");
                     }
                     else
                     {
                         Debug.Log("The ogre hits!");
                         health -= (ogreAttack - defense);
-                        Debug.Log("You have " + health + " HP!");
                     }
                 }
                 else
                 {
                     Debug.Log("The ogre misses...");
                 }
+
+                Debug.Log("You have " + health + " HP!");
 
                 if (health <= 0)
                 {
@@ -231,13 +261,11 @@ public class dungeonGame : MonoBehaviour
                 {
                     Debug.Log("You crit!");
                     ogreHealth -= ((attack * 2) - ogreDefense);
-                    Debug.Log("The ogre has " + ogreHealth + " HP!");
                 }
                 else
                 {
                     Debug.Log("You hit!");
                     ogreHealth -= (attack - ogreDefense);
-                    Debug.Log("The ogre has " + ogreHealth + " HP!");
                 }
                 if (ogreHealth <= 0)
                 {
@@ -249,6 +277,9 @@ public class dungeonGame : MonoBehaviour
             {
                 Debug.Log("You miss...");
             }
+
+            Debug.Log("The ogre has " + ogreHealth + " HP!");
+
         }
 
         if (playerAlive == false)
@@ -304,19 +335,19 @@ public class dungeonGame : MonoBehaviour
                 {
                     Debug.Log("The spider crits!");
                     health -= ((spiderAttack * 2) - defense);
-                    Debug.Log("You have " + health + " HP!");
                 }
                 else
                 {
                     Debug.Log("The spider hits!");
                     health -= (spiderAttack - defense);
-                    Debug.Log("You have " + health + " HP!");
                 }
             }
             else
             {
                 Debug.Log("The spider misses...");
             }
+
+            Debug.Log("You have " + health + " HP!");
 
             if (health <= 0)
             {
@@ -343,13 +374,11 @@ public class dungeonGame : MonoBehaviour
                 {
                     Debug.Log("You crit!");
                     spiderHealth -= ((attack * 2) - spiderDefense);
-                    Debug.Log("The spider has " + spiderHealth + " HP!");
                 }
                 else
                 {
                     Debug.Log("You hit!");
                     spiderHealth -= (attack - spiderDefense);
-                    Debug.Log("The spider has " + spiderHealth + " HP!");
                 }
                 if (spiderHealth <= 0)
                 {
@@ -361,9 +390,12 @@ public class dungeonGame : MonoBehaviour
             {
                 Debug.Log("You miss...");
             }
+
+            Debug.Log("The spider has " + spiderHealth + " HP!");
+
         }
 
-        if (playerAlive == false)
+        if (!playerAlive)
         {
             playerAlive = true;
             health = 1;
@@ -374,13 +406,15 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("The fire will remain lit for " + i + " more turns.");
             health += 2;
-            Debug.Log("As the warmth envelops you, you heal for 2 HP. Your HP is now " + health);
-            if(health >= maxHealth)
+            if (health >= maxHealth)
             {
                 health = maxHealth;
-                Debug.Log("Fully rested, you put out the fire.");
+                Debug.Log("As the warmth envelops you, you fully heal your wounds. Your HP is now " + health);
+                Debug.Log("Well rested, you put out the fire.");
                 break;
             }
+            Debug.Log("As the warmth envelops you, you heal for 2 HP. Your HP is now " + health);
+            
             
         }
 
@@ -425,11 +459,10 @@ public class dungeonGame : MonoBehaviour
             }
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
-        else {
+        else 
+        {
             Debug.Log("You decide to go down the right hall.");
 
-            Debug.Log("The Barracks");
-            
             Debug.Log("The Barracks");
             Debug.Log("You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.");
             roomCount += 1;
@@ -516,7 +549,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You move into the next room.");
 
         int potionCost = 5;
-        int potionCount = 0;
+        // int potionCount = 0;
 
         Debug.Log("The Merchant's Room");
 
@@ -591,7 +624,7 @@ public class dungeonGame : MonoBehaviour
         // A2: At a vault door, the hero may pass only if they are carrying the
         //     key and are still alive. If they cannot pass, report which of the
         //     two requirements they are missing.                                             check
-        
+
         // A4: As the hero explores, every third room they enter has a red glow.
         //     Given the number of the room the hero is standing in, report
         //     whether this room has the red glow.                                            check
@@ -603,7 +636,7 @@ public class dungeonGame : MonoBehaviour
         //     after every place the hero loses health (the spike trap, and
         //     anywhere else). You will add it again in Part B after each hit the
         //     hero takes in a fight.                                                         check
- 
+
 
         // ================= PART B - LOOPS (do after L8) =================
 
@@ -632,5 +665,106 @@ public class dungeonGame : MonoBehaviour
         //     recovering a little health each turn until fully healed or the
         //     fire dies after a set number of turns. Report their health as it
         //     climbs, and never let it rise above the maximum.
+
+
+
+        // A1: ROOMS INTO ARRAYS. Put your existing room names and descriptions into
+        //     two arrays (roomNames[i] and roomDescsriptions[i] describe the SAME
+        //     room). Keep the same rooms you already have (do not add or remove any).
+        // 
+
+        //     Hint: How many elements should be in the roomNames array? What about
+        //     the roomDescriptions array? Should they be different lengths or the same?
+
+
+        // A2: SHOW THE MAP. At the very start of the game, output every room name with
+        //     a single loop (a quick map of the dungeon) using Debug.Log
+        //
+
+        //      Hint: What new type of loop can you use for this that works specifically
+        //      with containers?
+
+
+        // A3: MOVE BY INDEX. Keep a currentRoom number that starts at 0. Each time the
+        //     player moves on, add 1 to it and show that room's name and description
+        //     from the arrays, instead of hand-writing each room's header.
+
+
+
+        // A4: ONE INVENTORY ARRAY. Replace your separate item flags (hasKey, the
+        //     sword, the shield, and so on) with a single inventory array. Add an item
+        //     to it each time the player picks something up.
+        //
+        //     Hint: How big does this array need to be? What data type should it be?
+
+
+
+        // A5: SHOW THE LOOT. At the end of the run, print the player's whole inventory
+
+
+
+        // A6: KEY FROM THE INVENTORY. At the vault door, do not use a hasKey bool.
+        //     Check whether "key" is in the inventory array to decide if the hero may
+        //     pass.
+        //     
+
+        //     Hint: How could you use what we've previously learned (loops and ifs) to
+        //     find if a specific item is in an array?
+
+
+
+        // A7: COMBAT ITEMS, NOT PERMANENT UPGRADES. Right now picking up the
+        //     sword or shield permanently raises attack or defense. Stop doing that. Leave the
+        //     Do not increase the base stats (attack and defense) of the player.
+        //
+
+        //     Instead, INSIDE each fight, check the inventory and apply the appropriate bonus
+        //     only in the attack and damage calculations. For example:
+        //     If the hero is carrying the sword, add swordBonus to the attack and damage roll
+        //     If the hero is carrying the shield, subtract shieldBonus when reducing damage taken
+
+
+
+        // A8: ENEMIES INTO ARRAYS (the data, not the encounters). Right now each enemy
+        //     is a pile of separate variables (goblinHealth, goblinAttack, ogreHealth,
+        //     and so on). Put them into arrays instead (enemyNames[], enemyHealth[],
+        //     enemyAttack[], enemyArmorClass[] and enemyDefense[]), one array element
+        //     per enemy (element 0 = goblin, element 1 = ogre, element 2 = spider)
+        //    Keep each fight in its OWN room and read the enemy from the arrays by index.
+
+        //
+        //     Hint: How many arrays do you need? How many elements per array?
+
+
+        // A9: GOLD BY ROOM. Store the gold each room holds in a roomGold[] array and
+        //     total it with a loop, instead of adding gold by hand in each room. As the player
+        //     walks through each room, add however much gold is in the room to the player's
+        //     overall gold.
+        //
+
+        //     Hint: How many elements do you need in this array? What should you do if
+        //     a room doesn't have gold in it?
+
+
+        // A10: ROOM ENEMIES. Create a roomEnemy[] array alongside your room arrays,
+        //      one slot per room, holding the index of the enemy waiting there (or -1 for none).
+        //      As currentRoom advances, if roomEnemy[currentRoom] is not -1, run the
+        //      enemy's fight. This ties each enemy to its room through the arrays.
+        //
+        //      Hint: What data type should the roomEnemy array be if it is an array of indexes?
+
+
+        // A11: TRACK VISITED ROOMS: Create a "visited" array of bools, one per room,
+        //      so you can mark the rooms the player has already been through.
+        //
+
+        //      Hint: How big should this array be? What data type should it be? What should
+        //      the starting values be?
+
+
+        // A12: LOOT TABLE: an array of possible rewards. Print the whole table (or
+        //      pick from it) with a loop instead of writing each reward out by hand. We won't
+        //      be using this table for anything yet, but add at least three possible rewards.
+        //      Example rewards could be some kind of healing item, weapon, armor, etc.
     }
 }
