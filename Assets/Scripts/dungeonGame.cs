@@ -66,6 +66,12 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
+        Debug.Log("Map of the dungeon:");
+        foreach (string name in roomNames) 
+        {
+            Debug.Log(name);
+        }
+
         Debug.Log("");
         Debug.Log("The Entrance Hall");
 
