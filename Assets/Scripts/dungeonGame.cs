@@ -664,6 +664,11 @@ public class dungeonGame : MonoBehaviour
         }
         Debug.Log("You use the rope to climb down from the large opening in the wall made by the ballista bolt, and to your freedom!");
 
+        foreach(string item in inventory)
+        {
+            Debug.Log(item);
+        }
+
         // ======================================================================
         // PART B  -  after the VARIABLES lecture (variables & operators)
         // ======================================================================
