@@ -35,6 +35,7 @@ public class dungeonGame : MonoBehaviour
         bool playerAlive = true;
         int roomCount = 0;
         int attackRoll = 0;
+        int currentRoom = -1;
 
         string[] roomNames = 
         {   
@@ -73,7 +74,9 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log("");
-        Debug.Log("The Entrance Hall");
+        //Debug.Log("The Entrance Hall");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -94,7 +97,9 @@ public class dungeonGame : MonoBehaviour
         int goblinRoll = 0;
 
         Debug.Log("");
-        Debug.Log("The Guard Room");
+        //Debug.Log("The Guard Room");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -191,7 +196,13 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("You move to the next room.");
 
-        Debug.Log("The Troll Cave");
+        Debug.Log("");
+        //Debug.Log("The Troll Cave");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
+
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
         Debug.Log("You walk into a large cave littered with bones.");
 
         roomCount += 1;
@@ -450,7 +461,11 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("You decide to go down the left hall.");
 
-            Debug.Log("The Mess Hall");
+            Debug.Log("");
+            //Debug.Log("The Mess Hall");
+            currentRoom += 1;
+            Debug.Log(roomNames[currentRoom]);
+
             roomCount += 1;
             if ((roomCount % 3) == 0)
             {
@@ -469,13 +484,18 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("You decide to go down the right hall.");
 
-            Debug.Log("The Barracks");
-            Debug.Log("You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.");
+            Debug.Log("");
+            //Debug.Log("The Barracks");
+            currentRoom += 1;
+            Debug.Log(roomNames[currentRoom]);
+
             roomCount += 1;
             if ((roomCount % 3) == 0)
             {
                 Debug.Log("As you enter, you notice the room is filled with a red glow");
             }
+
+            Debug.Log("You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.");
             Debug.Log("You check the chests for anything of use, but unfortunately find nothing that would aid your escape.");
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
@@ -488,8 +508,10 @@ public class dungeonGame : MonoBehaviour
         // TODO A1: FIX THE BROKEN ROOM below. It has bugs that stops the program
         //          from running. Un-comment the lines, find the bug(s), fix it,
         //          and add a // comment saying what was wrong.
-
-        Debug.Log("The Flooded Passage"); // line missing closing semi-colon
+        Debug.Log("");
+        //Debug.Log("The Flooded Passage"); // line missing closing semi-colon
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -504,7 +526,11 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You move into the next room.");
 
         int gold = 15;
-        Debug.Log("The Treasure Room"); // string was missing quotation marks
+
+        Debug.Log("");
+        //Debug.Log("The Treasure Room"); // string was missing quotation marks
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -519,7 +545,10 @@ public class dungeonGame : MonoBehaviour
 
         // TODO A2: write at least one of your OWN room - a Room Name line,
         //          a description line, and a line describing how you exit. 
-        Debug.Log("The Armory");
+        Debug.Log("");
+        //Debug.Log("The Armory");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -556,8 +585,10 @@ public class dungeonGame : MonoBehaviour
 
         int potionCost = 5;
         // int potionCount = 0;
-
-        Debug.Log("The Merchant's Room");
+        Debug.Log("");
+        //Debug.Log("The Merchant's Room");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -572,7 +603,10 @@ public class dungeonGame : MonoBehaviour
 
         // TODO A3: write the EXIT room - a final "room" and description that leads the
         //          player out of the dungeon.
-        Debug.Log("The Broken Throneroom");
+        Debug.Log("");
+        //Debug.Log("The Broken Throneroom");
+        currentRoom += 1;
+        Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
