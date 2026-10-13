@@ -75,8 +75,14 @@ public class dungeonGame : MonoBehaviour
             "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
             "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
         };
-
+        
         string[] inventory = { "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak
+
+        string[] enemyNames = { "goblin", "ogre", "spider" };
+        int[] enemyHealth = { 15, };
+        int[] enemyAttack = { 2, };
+        int[] enemyArmorClass = { 10, };
+        int[] enemyDefense = { 1, };
 
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
@@ -111,10 +117,6 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("Your agility increases to " + agility);
         Debug.Log("You move into the next room.");
 
-        int goblinHealth = 15;
-        int goblinAttack = 2;
-        int goblinDefense = 1;
-        int goblinArmor = 10;
         int goblinRoll = 0;
 
         Debug.Log("");
@@ -133,7 +135,7 @@ public class dungeonGame : MonoBehaviour
         openInvSlot += 1;
         inventory[openInvSlot] += "rusted shortsword";
 
-        Debug.Log("The goblin lunges at you!");
+        Debug.Log("The " + enemyNames[0] + " lunges at you!");
 
         for (int i = 1; ; i++)
         {
@@ -170,26 +172,26 @@ public class dungeonGame : MonoBehaviour
             }
             Debug.Log("Turn " + i + ".");
 
-            Debug.Log("The goblin attacks you!");
+            Debug.Log("The " + enemyNames[0] + " attacks you!");
             goblinRoll = Random.Range(1, 21);
-            Debug.Log("The goblin attacks with an attack roll of " + goblinRoll + ".");
+            Debug.Log("The " + enemyNames[0] +" attacks with an attack roll of " + goblinRoll + ".");
 
             if (goblinRoll >= armorClass)
             {
                 if (goblinRoll == 20)
                 {
-                    Debug.Log("The goblin crits!");
-                    health -= ((goblinAttack*2) - totalDefense);
+                    Debug.Log("The " + enemyNames[0] + " crits!");
+                    health -= ((enemyAttack[0]*2) - totalDefense);
                 }
                 else
                 {
-                    Debug.Log("The goblin hits!");
-                    health -= (goblinAttack - totalDefense);
+                    Debug.Log("The " + enemyNames[0] + " hits!");
+                    health -= (enemyAttack[0] - totalDefense);
                 }
             }
             else
             {
-                Debug.Log("The goblin misses...");
+                Debug.Log("The " + enemyNames[0] + " misses...");
             }
 
             Debug.Log("You have " + health + " HP!");
@@ -209,25 +211,25 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("You are wounded, but carry on");
             }
 
-            Debug.Log("You attack the goblin!");
+            Debug.Log("You attack the " + enemyNames[0] + "!");
             attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
-            if (attackRoll >= goblinArmor)
+            if (attackRoll >= enemyArmorClass[0])
             {
-                if (attackRoll == 20)
+                if (attackRoll >= 20)
                 {
                     Debug.Log("You crit!");
-                    goblinHealth -= ((totalAttack * 2) - goblinDefense);
+                    enemyHealth[0] -= ((totalAttack * 2) - enemyDefense[0]);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    goblinHealth -= (totalAttack - goblinDefense);
+                    enemyHealth[0] -= (totalAttack - enemyDefense[0]);
                 }
-                if(goblinHealth <= 0)
+                if(enemyHealth[0] <= 0)
                 {
-                    Debug.Log("You defeat the goblin!");
+                    Debug.Log("You defeat the " + enemyNames[0] + "!");
                     break;
                 }
             }
@@ -236,7 +238,7 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("You miss...");
             }
 
-            Debug.Log("The goblin has " + goblinHealth + " HP!");
+            Debug.Log("The " + enemyNames[0] + " has " + enemyHealth[0] + " HP!");
 
         }
 
@@ -263,12 +265,8 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("As you enter, you notice the room is filled with a red glow");
         }
 
-        Debug.Log("An ogre in the back of the room hears you enter, and charges at you!");
+        Debug.Log("An " + enemyNames[1] + " in the back of the room hears you enter, and charges at you!");
 
-        int ogreHealth = 20;
-        int ogreAttack = 3;
-        int ogreDefense = 1;
-        int ogreArmor = 10;
         int ogreRoll = 0;
 
         for (int i = 1; ; i++)
@@ -308,30 +306,30 @@ public class dungeonGame : MonoBehaviour
 
             if (i % 2 == 0)
             {
-                Debug.Log("The ogre struggles to regain its balance after its swing and cannot attack!");
+                Debug.Log("The " + enemyNames[1] + " struggles to regain its balance after its swing and cannot attack!");
             }
             else
             {
-                Debug.Log("The ogre attacks you with its mighty club!");
+                Debug.Log("The " + enemyNames[1] + " attacks you with its mighty club!");
                 ogreRoll = Random.Range(1, 21);
-                Debug.Log("The ogre attacks with an attack roll of " + ogreRoll + ".");
+                Debug.Log("The " + enemyNames[1] + " attacks with an attack roll of " + ogreRoll + ".");
 
                 if (ogreRoll >= armorClass)
                 {
                     if (ogreRoll == 20)
                     {
-                        Debug.Log("The ogre crits!");
-                        health -= ((ogreAttack * 2) - totalDefense);
+                        Debug.Log("The " + enemyNames[1] + " crits!");
+                        health -= ((enemyAttack[1] * 2) - totalDefense);
                     }
                     else
                     {
-                        Debug.Log("The ogre hits!");
-                        health -= (ogreAttack - totalDefense);
+                        Debug.Log("The " + enemyNames[1] + " hits!");
+                        health -= (enemyAttack[1] - totalDefense);
                     }
                 }
                 else
                 {
-                    Debug.Log("The ogre misses...");
+                    Debug.Log("The " + enemyNames[1] + " misses...");
                 }
 
                 Debug.Log("You have " + health + " HP!");
@@ -351,25 +349,25 @@ public class dungeonGame : MonoBehaviour
                     Debug.Log("You are wounded, but carry on");
                 }
             }
-            Debug.Log("You attack the ogre!");
+            Debug.Log("You attack the " + enemyNames[1] + "!");
             attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
-            if (attackRoll >= ogreArmor)
+            if (attackRoll >= enemyArmorClass[1])
             {
-                if (attackRoll == 20)
+                if (attackRoll >= 20)
                 {
                     Debug.Log("You crit!");
-                    ogreHealth -= ((totalAttack * 2) - ogreDefense);
+                    enemyHealth[1] -= ((totalAttack * 2) - enemyDefense[1]);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    ogreHealth -= (totalAttack - ogreDefense);
+                    enemyHealth[1] -= (totalAttack - enemyDefense[1]);
                 }
-                if (ogreHealth <= 0)
+                if (enemyHealth[1] <= 0)
                 {
-                    Debug.Log("You defeat the ogre!");
+                    Debug.Log("You defeat the " + enemyNames[1] + "!");
                     break;
                 }
             }
@@ -378,7 +376,7 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("You miss...");
             }
 
-            Debug.Log("The ogre has " + ogreHealth + " HP!");
+            Debug.Log("The " + enemyNames[1] + " has " + enemyHealth[1] + " HP!");
 
         }
 
@@ -391,10 +389,6 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("A great spider descends from a hole in the roof of the cave!");
 
-        int spiderHealth = 20;
-        int spiderAttack = 2;
-        int spiderDefense = 1;
-        int spiderArmor = 11;
         int spiderRoll = 0;
         int spiderPoison = 0;
 
@@ -455,27 +449,27 @@ public class dungeonGame : MonoBehaviour
                 }
             }
 
-            Debug.Log("The spider attacks you with its venomous bite!");
+            Debug.Log("The " + enemyNames[2] + " attacks you with its venomous bite!");
             spiderRoll = Random.Range(1, 21);
-            Debug.Log("The spider attacks with an attack roll of " + spiderRoll + ".");
+            Debug.Log("The " + enemyNames[2] + " attacks with an attack roll of " + spiderRoll + ".");
 
             if (spiderRoll >= armorClass)
             {
                 spiderPoison += 3;
                 if (spiderRoll == 20)
                 {
-                    Debug.Log("The spider crits!");
-                    health -= ((spiderAttack * 2) - totalDefense);
+                    Debug.Log("The " + enemyNames[2] + " crits!");
+                    health -= ((enemyAttack[2] * 2) - totalDefense);
                 }
                 else
                 {
-                    Debug.Log("The spider hits!");
-                    health -= (spiderAttack - totalDefense);
+                    Debug.Log("The " + enemyNames[2] + " hits!");
+                    health -= (enemyAttack[2] - totalDefense);
                 }
             }
             else
             {
-                Debug.Log("The spider misses...");
+                Debug.Log("The " + enemyNames[2] + " misses...");
             }
 
             Debug.Log("You have " + health + " HP!");
@@ -495,25 +489,25 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("You are wounded, but carry on");
             }
 
-            Debug.Log("You attack the spider!");
+            Debug.Log("You attack the " + enemyNames[2] + "!");
             attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
-            if (attackRoll >= spiderArmor)
+            if (attackRoll >= enemyArmorClass[2])
             {
-                if (attackRoll == 20)
+                if (attackRoll >= 20)
                 {
                     Debug.Log("You crit!");
-                    spiderHealth -= ((totalAttack * 2) - spiderDefense);
+                    enemyHealth[2] -= ((totalAttack * 2) - enemyDefense[2]);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    spiderHealth -= (totalAttack - spiderDefense);
+                    enemyHealth[2] -= (totalAttack - enemyDefense[2]);
                 }
-                if (spiderHealth <= 0)
+                if (enemyHealth[2] <= 0)
                 {
-                    Debug.Log("You defeat the spider!");
+                    Debug.Log("You defeat the " + enemyNames[2] + "!");
                     break;
                 }
             }
@@ -522,7 +516,7 @@ public class dungeonGame : MonoBehaviour
                 Debug.Log("You miss...");
             }
 
-            Debug.Log("The spider has " + spiderHealth + " HP!");
+            Debug.Log("The " + enemyNames[2] + " has " + enemyHealth[2] + " HP!");
 
         }
 
