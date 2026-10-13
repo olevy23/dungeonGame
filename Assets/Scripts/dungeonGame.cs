@@ -30,6 +30,7 @@ public class dungeonGame : MonoBehaviour
         int defense = 1;
         int armorClass = 10;
         int agility = 1;
+        int gold = 0;
         //bool hasKey = false;
         //bool hasRope = false;
         bool playerAlive = true;
@@ -62,6 +63,8 @@ public class dungeonGame : MonoBehaviour
             "The Broken Throneroom",
         };
 
+        int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0 };
+
         string[] roomDescsriptions = 
         {   
             "A torch flickers on the wall. A stone doorway leads north.",
@@ -70,19 +73,18 @@ public class dungeonGame : MonoBehaviour
             "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
             "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
             "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
-            "It seems this room has been raided. You find " + 5000 + " gold.",
+            "It seems this room has been raided. You find " + roomGold[6] + " gold.",
             "This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.",
             "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
             "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
         };
-        
         string[] inventory = { "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak
 
         string[] enemyNames = { "goblin", "ogre", "spider" };
-        int[] enemyHealth = { 15, };
-        int[] enemyAttack = { 2, };
-        int[] enemyArmorClass = { 10, };
-        int[] enemyDefense = { 1, };
+        int[] enemyHealth = { 15, 20, 20};
+        int[] enemyAttack = { 2, 3, 2};
+        int[] enemyArmorClass = { 10, 10, 11};
+        int[] enemyDefense = { 1, 1, 1};
 
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
@@ -115,6 +117,9 @@ public class dungeonGame : MonoBehaviour
             }
         }
         Debug.Log("Your agility increases to " + agility);
+
+        Debug.Log("You find " + roomGold[0] + " gold");
+        gold += roomGold[0];
         Debug.Log("You move into the next room.");
 
         int goblinRoll = 0;
@@ -247,7 +252,8 @@ public class dungeonGame : MonoBehaviour
             playerAlive = true;
             health = 1;
         }
-
+        Debug.Log("You find " + roomGold[1] + " gold");
+        gold += roomGold[1];
         Debug.Log("You move to the next room.");
 
         Debug.Log("");
@@ -526,6 +532,9 @@ public class dungeonGame : MonoBehaviour
             health = 1;
         }
 
+        Debug.Log("You find " + roomGold[2] + " gold");
+        gold += roomGold[2];
+
         Debug.Log("You find the remains of a small campfire someone left in the cave. You light it to rest from the grueling gauntlet of combat.");
         for(int i = 5; i > 0; i--)
         {
@@ -586,6 +595,8 @@ public class dungeonGame : MonoBehaviour
             {
                 health = maxHealth;
             }
+            Debug.Log("You find " + roomGold[3] + " gold");
+            gold += roomGold[3];
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
         else 
@@ -605,6 +616,8 @@ public class dungeonGame : MonoBehaviour
 
             Debug.Log("You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.");
             Debug.Log("You check the chests for anything of use, but unfortunately find nothing that would aid your escape.");
+            Debug.Log("You find " + roomGold[4] + " gold");
+            gold += roomGold[4];
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
 
@@ -632,10 +645,10 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
         openInvSlot += 1;
         inventory[openInvSlot] += "key";
-        
+        Debug.Log("You find " + roomGold[5] + " gold");
+        gold += roomGold[5];
         Debug.Log("You move into the next room.");
 
-        int gold = 15;
 
         Debug.Log("");
         //Debug.Log("The Treasure Room"); // string was missing quotation marks
@@ -648,8 +661,8 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("As you enter, you notice the room is filled with a red glow");
         }
 
-        Debug.Log("It seems this room has been raided. You find " + 5000 + " gold."); // wow that's a lot of gold! no programming bug, however
-        gold += 5000;
+        Debug.Log(roomDescsriptions[6]); // wow that's a lot of gold! no programming bug, however
+        gold += roomGold[6];
         Debug.Log("You move into the next room."); // line was missing closing semicolon and string was missing closing quotation mark
 
 
@@ -695,6 +708,9 @@ public class dungeonGame : MonoBehaviour
             }
         }
 
+        Debug.Log("You find " + roomGold[7] + " gold");
+        gold += roomGold[7];
+
         Debug.Log("You move into the next room.");
 
         int potionCost = 5;
@@ -713,6 +729,8 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'");
         Debug.Log("The Merchant is selling health potions for " + potionCost + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
         Debug.Log("You can currently afford " + (gold / potionCost) + "potions, which would leave your coin purse with only " + (gold % potionCost) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
+        Debug.Log("You find " + roomGold[8] + " gold");
+        gold += roomGold[8];
         Debug.Log("You leave through an ornate door behind the Merchant's stall that you did not see upon entering.");
 
         // TODO A3: write the EXIT room - a final "room" and description that leads the
@@ -730,6 +748,8 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.");
         Debug.Log("You see that the throne would make for a good point to secure a rope to.");
+        Debug.Log("You find " + roomGold[9] + " gold");
+        gold += roomGold[9];
         for (int i = 0; i < inventory.Length; i++)
         {
             if (inventory[i] == "rope")
@@ -748,6 +768,7 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log(item);
         }
+        Debug.Log("You escape the dungeon with " + gold + " gold!");
 
         // ======================================================================
         // PART B  -  after the VARIABLES lecture (variables & operators)
