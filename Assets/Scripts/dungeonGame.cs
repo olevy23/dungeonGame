@@ -88,6 +88,8 @@ public class dungeonGame : MonoBehaviour
 
         int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1}; //index contains the enemy's index if room has an encounter, otherwise index is -1
 
+        bool[] visited = { false, false, false, false, false, false, false, false, false, false };
+
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
         Debug.Log("Map of the dungeon:");
@@ -98,8 +100,9 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Entrance Hall");
-        currentRoom += 1;
+        currentRoom = 0;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -128,8 +131,9 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Guard Room");
-        currentRoom += 1;
+        currentRoom = 1;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -263,11 +267,10 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Troll Cave");
-        currentRoom += 1;
+        currentRoom = 2;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
-        currentRoom += 1;
-        Debug.Log(roomNames[currentRoom]);
         Debug.Log("You walk into a large cave littered with bones.");
 
         roomCount += 1;
@@ -588,8 +591,9 @@ public class dungeonGame : MonoBehaviour
 
             Debug.Log("");
             //Debug.Log("The Mess Hall");
-            currentRoom += 1;
+            currentRoom = 3;
             Debug.Log(roomNames[currentRoom]);
+            visited[currentRoom] = true;
 
             roomCount += 1;
             if ((roomCount % 3) == 0)
@@ -613,8 +617,9 @@ public class dungeonGame : MonoBehaviour
 
             Debug.Log("");
             //Debug.Log("The Barracks");
-            currentRoom += 1;
+            currentRoom = 4;
             Debug.Log(roomNames[currentRoom]);
+            visited[currentRoom] = true;
 
             roomCount += 1;
             if ((roomCount % 3) == 0)
@@ -640,8 +645,9 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Flooded Passage"); // line missing closing semi-colon
-        currentRoom += 1;
+        currentRoom = 5;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -660,8 +666,9 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Treasure Room"); // string was missing quotation marks
-        currentRoom += 1;
+        currentRoom = 6;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -678,8 +685,9 @@ public class dungeonGame : MonoBehaviour
         //          a description line, and a line describing how you exit. 
         Debug.Log("");
         //Debug.Log("The Armory");
-        currentRoom += 1;
+        currentRoom = 7;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -725,8 +733,9 @@ public class dungeonGame : MonoBehaviour
         // int potionCount = 0;
         Debug.Log("");
         //Debug.Log("The Merchant's Room");
-        currentRoom += 1;
+        currentRoom = 8;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -745,8 +754,9 @@ public class dungeonGame : MonoBehaviour
         //          player out of the dungeon.
         Debug.Log("");
         //Debug.Log("The Broken Throneroom");
-        currentRoom += 1;
+        currentRoom = 9;
         Debug.Log(roomNames[currentRoom]);
+        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
