@@ -30,13 +30,23 @@ public class dungeonGame : MonoBehaviour
         int defense = 1;
         int armorClass = 10;
         int agility = 1;
-        bool hasKey = false;
-        bool hasRope = false;
+        //bool hasKey = false;
+        //bool hasRope = false;
         bool playerAlive = true;
         int roomCount = 0;
         int attackRoll = 0;
         int currentRoom = -1;
         int openInvSlot = -1;
+
+        int shortSwordBonus = 1;
+        int swordBonus = 1;
+        int cloakBonus = 1;
+        bool shortSwordCheck = false;
+        bool swordCheck = false;
+        bool cloakCheck = false;
+        int totalAttack = attack;
+        int totalDefense = defense;
+
 
         string[] roomNames = 
         {   
@@ -66,7 +76,7 @@ public class dungeonGame : MonoBehaviour
             "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
         };
 
-        string[] inventory = { "", "", "", "", "", "" }; //inventory can contain rusted sword, polished sword, key, rope, torch, and cloak
+        string[] inventory = { "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak
 
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
@@ -122,19 +132,42 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("The goblin jolts awake, and seeing you, makes to charge you. You snatch up the sword in a panic and prepare to defend yourself.");
         openInvSlot += 1;
         inventory[openInvSlot] += "rusted shortsword";
-        foreach (string itemCheck in inventory)
-        {
-            if (itemCheck == "rusted shortsword")
-            {
-                attack += 1;
-            }
-        }
-        Debug.Log("Your attack increases to " + attack);
 
         Debug.Log("The goblin lunges at you!");
 
         for (int i = 1; ; i++)
         {
+            foreach(string item in inventory)
+            {
+                if(item == "rusted shortsword")
+                {
+                    shortSwordCheck = true;
+                }
+                if(item == "polished sword")
+                {
+                    swordCheck = true;
+                }
+                if(item == "cloak")
+                {
+                    cloakCheck = true;
+                }
+            }
+            if (shortSwordCheck)
+            {
+                totalAttack = attack + shortSwordBonus;
+            }
+            if (swordCheck)
+            {
+                totalAttack = attack + swordBonus;
+            }
+            if (shortSwordCheck && swordCheck)
+            {
+                totalAttack = attack + shortSwordBonus + swordBonus;
+            }
+            if (cloakCheck)
+            {
+                totalDefense = defense + cloakBonus;
+            }
             Debug.Log("Turn " + i + ".");
 
             Debug.Log("The goblin attacks you!");
@@ -146,12 +179,12 @@ public class dungeonGame : MonoBehaviour
                 if (goblinRoll == 20)
                 {
                     Debug.Log("The goblin crits!");
-                    health -= ((goblinAttack*2) - defense);
+                    health -= ((goblinAttack*2) - totalDefense);
                 }
                 else
                 {
                     Debug.Log("The goblin hits!");
-                    health -= (goblinAttack - defense);
+                    health -= (goblinAttack - totalDefense);
                 }
             }
             else
@@ -177,7 +210,7 @@ public class dungeonGame : MonoBehaviour
             }
 
             Debug.Log("You attack the goblin!");
-            attackRoll = Random.Range(1, 21);
+            attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
             if (attackRoll >= goblinArmor)
@@ -185,12 +218,12 @@ public class dungeonGame : MonoBehaviour
                 if (attackRoll == 20)
                 {
                     Debug.Log("You crit!");
-                    goblinHealth -= ((attack * 2) - goblinDefense);
+                    goblinHealth -= ((totalAttack * 2) - goblinDefense);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    goblinHealth -= (attack - goblinDefense);
+                    goblinHealth -= (totalAttack - goblinDefense);
                 }
                 if(goblinHealth <= 0)
                 {
@@ -240,6 +273,37 @@ public class dungeonGame : MonoBehaviour
 
         for (int i = 1; ; i++)
         {
+            foreach (string item in inventory)
+            {
+                if (item == "rusted shortsword")
+                {
+                    shortSwordCheck = true;
+                }
+                if (item == "polished sword")
+                {
+                    swordCheck = true;
+                }
+                if (item == "cloak")
+                {
+                    cloakCheck = true;
+                }
+            }
+            if (shortSwordCheck)
+            {
+                totalAttack = attack + shortSwordBonus;
+            }
+            if (swordCheck)
+            {
+                totalAttack = attack + swordBonus;
+            }
+            if (shortSwordCheck && swordCheck)
+            {
+                totalAttack = attack + shortSwordBonus + swordBonus;
+            }
+            if (cloakCheck)
+            {
+                totalDefense = defense + cloakBonus;
+            }
             Debug.Log("Turn " + i + ".");
 
             if (i % 2 == 0)
@@ -257,12 +321,12 @@ public class dungeonGame : MonoBehaviour
                     if (ogreRoll == 20)
                     {
                         Debug.Log("The ogre crits!");
-                        health -= ((ogreAttack * 2) - defense);
+                        health -= ((ogreAttack * 2) - totalDefense);
                     }
                     else
                     {
                         Debug.Log("The ogre hits!");
-                        health -= (ogreAttack - defense);
+                        health -= (ogreAttack - totalDefense);
                     }
                 }
                 else
@@ -288,7 +352,7 @@ public class dungeonGame : MonoBehaviour
                 }
             }
             Debug.Log("You attack the ogre!");
-            attackRoll = Random.Range(1, 21);
+            attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
             if (attackRoll >= ogreArmor)
@@ -296,12 +360,12 @@ public class dungeonGame : MonoBehaviour
                 if (attackRoll == 20)
                 {
                     Debug.Log("You crit!");
-                    ogreHealth -= ((attack * 2) - ogreDefense);
+                    ogreHealth -= ((totalAttack * 2) - ogreDefense);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    ogreHealth -= (attack - ogreDefense);
+                    ogreHealth -= (totalAttack - ogreDefense);
                 }
                 if (ogreHealth <= 0)
                 {
@@ -336,6 +400,37 @@ public class dungeonGame : MonoBehaviour
 
         for (int i = 1; ; i++)
         {
+            foreach (string item in inventory)
+            {
+                if (item == "rusted shortsword")
+                {
+                    shortSwordCheck = true;
+                }
+                if (item == "polished sword")
+                {
+                    swordCheck = true;
+                }
+                if (item == "cloak")
+                {
+                    cloakCheck = true;
+                }
+            }
+            if (shortSwordCheck)
+            {
+                totalAttack = attack + shortSwordBonus;
+            }
+            if (swordCheck)
+            {
+                totalAttack = attack + swordBonus;
+            }
+            if (shortSwordCheck && swordCheck)
+            {
+                totalAttack = attack + shortSwordBonus + swordBonus;
+            }
+            if (cloakCheck)
+            {
+                totalDefense = defense + cloakBonus;
+            }
             Debug.Log("Turn " + i + ".");
 
             if (spiderPoison > 0)
@@ -370,12 +465,12 @@ public class dungeonGame : MonoBehaviour
                 if (spiderRoll == 20)
                 {
                     Debug.Log("The spider crits!");
-                    health -= ((spiderAttack * 2) - defense);
+                    health -= ((spiderAttack * 2) - totalDefense);
                 }
                 else
                 {
                     Debug.Log("The spider hits!");
-                    health -= (spiderAttack - defense);
+                    health -= (spiderAttack - totalDefense);
                 }
             }
             else
@@ -401,7 +496,7 @@ public class dungeonGame : MonoBehaviour
             }
 
             Debug.Log("You attack the spider!");
-            attackRoll = Random.Range(1, 21);
+            attackRoll = Random.Range(1, 21) + totalAttack;
             Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
             if (attackRoll >= spiderArmor)
@@ -409,12 +504,12 @@ public class dungeonGame : MonoBehaviour
                 if (attackRoll == 20)
                 {
                     Debug.Log("You crit!");
-                    spiderHealth -= ((attack * 2) - spiderDefense);
+                    spiderHealth -= ((totalAttack * 2) - spiderDefense);
                 }
                 else
                 {
                     Debug.Log("You hit!");
-                    spiderHealth -= (attack - spiderDefense);
+                    spiderHealth -= (totalAttack - spiderDefense);
                 }
                 if (spiderHealth <= 0)
                 {
@@ -585,32 +680,15 @@ public class dungeonGame : MonoBehaviour
             {
 
                 Debug.Log("You try the key in the chest's lock. It works!");
-                Debug.Log("You open the chest, revealing a polished shortsword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
+                Debug.Log("You open the chest, revealing a polished sword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
                 openInvSlot += 1;
-                inventory[openInvSlot] += "polished shortsword";
-                foreach (string itemCheck in inventory)
-                {
-                    if (itemCheck == "polished shortsword")
-                    {
-                        attack += 1;
-                    }
-                }
-                Debug.Log("You put the polished shortsword in your belt, increasing your attack to " + attack + ".");
+                inventory[openInvSlot] += "polished sword";
 
                 openInvSlot += 1;
                 inventory[openInvSlot] += "cloak";
-                foreach (string itemCheck in inventory)
-                {
-                    if (itemCheck == "cloak")
-                    {
-                        defense += 1;
-                    }
-                }
-                Debug.Log("You don the cloak, and your defense increases to " + defense + ".");
 
                 openInvSlot += 1;
                 inventory[openInvSlot] += "rope";
-                Debug.Log("You put the rope over one shoulder like a sash for safekeeping.");
                 break;
             }
             if (i == inventory.Length - 1 && playerAlive)
@@ -657,14 +735,20 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log("A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.");
-        Debug.Log("You see that the throne would make for a good point to secure the rope to.");
-            if(hasRope == true)
+        Debug.Log("You see that the throne would make for a good point to secure a rope to.");
+        for (int i = 0; i < inventory.Length; i++)
         {
-            Debug.Log("You tie one end of the rop to the throne.");
-            hasRope = false;
-            Debug.Log("hasRope: " + hasRope);
+            if (inventory[i] == "rope")
+            {
+                Debug.Log("You tie one end of the rope to the throne.");
+                Debug.Log("You use the rope to climb down from the large opening in the wall made by the ballista bolt, and to your freedom!");
+                break;
+            }
+            else if(i == inventory.Length - 1)
+            {
+                Debug.Log("You may want to look for something to use to escape through the breach in the wall...");
+            }
         }
-        Debug.Log("You use the rope to climb down from the large opening in the wall made by the ballista bolt, and to your freedom!");
 
         foreach(string item in inventory)
         {
