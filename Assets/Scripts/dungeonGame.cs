@@ -578,47 +578,49 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log("This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.");
-        
-        if (hasKey && playerAlive)
-        {
-            Debug.Log("You try the key in the chest's lock. It works!");
-            hasKey = false;
-            Debug.Log("haskey: " + hasKey);
-            Debug.Log("You open the chest, revealing a polished shortsword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
-            openInvSlot += 1;
-            inventory[openInvSlot] += "polished shortsword";
-            foreach (string itemCheck in inventory)
-            {
-                if (name == "polished shortsword")
-                {
-                    attack += 1;
-                }
-            }
-            Debug.Log("You put the polished shortsword in your belt, increasing your attack to " + attack + ".");
 
-            openInvSlot += 1;
-            inventory[openInvSlot] += "cloak";
-            foreach (string itemCheck in inventory)
+        for (int i = 0; i < inventory.Length; i++)
+        {
+            if (inventory[i] == "key" && playerAlive)
             {
-                if (itemCheck == "cloak")
+
+                Debug.Log("You try the key in the chest's lock. It works!");
+                Debug.Log("You open the chest, revealing a polished shortsword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
+                openInvSlot += 1;
+                inventory[openInvSlot] += "polished shortsword";
+                foreach (string itemCheck in inventory)
                 {
-                    defense += 1;
+                    if (itemCheck == "polished shortsword")
+                    {
+                        attack += 1;
+                    }
                 }
+                Debug.Log("You put the polished shortsword in your belt, increasing your attack to " + attack + ".");
+
+                openInvSlot += 1;
+                inventory[openInvSlot] += "cloak";
+                foreach (string itemCheck in inventory)
+                {
+                    if (itemCheck == "cloak")
+                    {
+                        defense += 1;
+                    }
+                }
+                Debug.Log("You don the cloak, and your defense increases to " + defense + ".");
+
+                openInvSlot += 1;
+                inventory[openInvSlot] += "rope";
+                Debug.Log("You put the rope over one shoulder like a sash for safekeeping.");
+                break;
             }
-            Debug.Log("You don the cloak, and your defense increases to " + defense + ".");
-            
-            openInvSlot += 1;
-            inventory[openInvSlot] += "rope";
-            Debug.Log("You put the rope over one shoulder like a sash for safekeeping.");
-            Debug.Log("hasRope: " + hasRope);
-        }
-        else if (!hasKey)
-        {
-            Debug.Log("You have no key for the chest");
-        }
-        else if (!playerAlive)
-        {
-            Debug.Log("You unfortunately have collapsed to your wounds, and therefore don't have the strength to open the chest");
+            if (i == inventory.Length - 1 && playerAlive)
+            {
+                Debug.Log("You have no key for the chest");
+            }
+            if (i == inventory.Length - 1 && !playerAlive)
+            {
+                Debug.Log("You unfortunately have collapsed to your wounds, and therefore don't have the strength to open the chest");
+            }
         }
 
         Debug.Log("You move into the next room.");
