@@ -92,6 +92,20 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("=== THE DUNGEON ===");
     }
 
+    void ShowRoom(int index)
+    {
+        Debug.Log(roomNames[index]);
+        visited[index] = true;
+
+        roomCount += 1;
+        if ((roomCount % 3) == 0)
+        {
+            Debug.Log("As you enter, you notice the room is filled with a red glow");
+        }
+
+        Debug.Log(roomDescriptions[index]);
+    }
+
     void Start()
     {
 
@@ -106,23 +120,14 @@ public class dungeonGame : MonoBehaviour
             Debug.Log(name);
         }
 
-        Debug.Log("Starting Loot:" + loot[4]);
+        Debug.Log("Starting Loot: " + loot[4]);
         openInvSlot += 1;
         inventory[openInvSlot] += loot[4];
 
         Debug.Log("");
         //Debug.Log("The Entrance Hall");
         currentRoom = 0;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        ShowRoom(currentRoom);
         Debug.Log("You take the torch. With the light it casts, you feel you can move a bit quicker.");
         openInvSlot += 1;
         inventory[openInvSlot] += "torch";
@@ -144,16 +149,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("");
         //Debug.Log("The Guard Room");
         currentRoom = 1;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        ShowRoom(currentRoom);
         Debug.Log("The goblin jolts awake, and seeing you, makes to charge you. You snatch up the sword in a panic and prepare to defend yourself.");
         openInvSlot += 1;
         inventory[openInvSlot] += "rusted shortsword";
@@ -280,16 +276,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("");
         //Debug.Log("The Troll Cave");
         currentRoom = 2;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        Debug.Log(roomDescriptions[currentRoom]);
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
+        ShowRoom(currentRoom);
         if (roomEnemy[currentRoom] != -1)
         {
             Debug.Log("An " + enemyNames[1] + " in the back of the room hears you enter, and charges at you!");
@@ -604,15 +591,7 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("");
             //Debug.Log("The Mess Hall");
             currentRoom = 3;
-            Debug.Log(roomNames[currentRoom]);
-            visited[currentRoom] = true;
-
-            roomCount += 1;
-            if ((roomCount % 3) == 0)
-            {
-                Debug.Log("As you enter, you notice the room is filled with a red glow");
-            }
-            Debug.Log(roomDescriptions[currentRoom]);
+            ShowRoom(currentRoom);
             Debug.Log("In a large alcove you find a cookfire with a large pot filled with bubble stew. You eat from it to regain your strength.");
             health += 3;
             if (health >= maxHealth)
@@ -630,16 +609,7 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("");
             //Debug.Log("The Barracks");
             currentRoom = 4;
-            Debug.Log(roomNames[currentRoom]);
-            visited[currentRoom] = true;
-
-            roomCount += 1;
-            if ((roomCount % 3) == 0)
-            {
-                Debug.Log("As you enter, you notice the room is filled with a red glow");
-            }
-
-            Debug.Log(roomDescriptions[currentRoom]);
+            ShowRoom(currentRoom);
             Debug.Log("You check the chests for anything of use, but unfortunately find nothing that would aid your escape.");
             Debug.Log("You find " + roomGold[4] + " gold");
             gold += roomGold[4];
@@ -650,16 +620,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("");
         //Debug.Log("The Flooded Passage");
         currentRoom = 5;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        ShowRoom(currentRoom);
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
         openInvSlot += 1;
         inventory[openInvSlot] += "key";
@@ -672,7 +633,6 @@ public class dungeonGame : MonoBehaviour
         //Debug.Log("The Treasure Room");
         currentRoom = 6;
         Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
 
         roomCount += 1;
         if ((roomCount % 3) == 0)
@@ -687,17 +647,8 @@ public class dungeonGame : MonoBehaviour
 
         Debug.Log("");
         //Debug.Log("The Armory");
-        currentRoom = 7;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        currentRoom = 7; 
+        ShowRoom(currentRoom);
 
         for (int i = 0; i < inventory.Length; i++)
         {
@@ -736,16 +687,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("");
         //Debug.Log("The Merchant's Room");
         currentRoom = 8;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        ShowRoom(currentRoom);
         Debug.Log("The Merchant is selling health potions for " + potionCost + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
         Debug.Log("You can currently afford " + (gold / potionCost) + "potions, which would leave your coin purse with only " + (gold % potionCost) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
         Debug.Log("You find " + roomGold[8] + " gold");
@@ -756,16 +698,7 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("");
         //Debug.Log("The Broken Throneroom");
         currentRoom = 9;
-        Debug.Log(roomNames[currentRoom]);
-        visited[currentRoom] = true;
-
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
+        ShowRoom(currentRoom);
         Debug.Log("You see that the throne would make for a good point to secure a rope to.");
         Debug.Log("You find " + roomGold[9] + " gold");
         gold += roomGold[9];
