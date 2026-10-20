@@ -162,20 +162,7 @@ public class dungeonGame : MonoBehaviour
         }
         Debug.Log("You have " + health + " HP!");
 
-        if (!IsAlive())
-        {
-            Debug.Log("You collapse to your sustained wounds");
-            playerAlive = false;
-            inCombat = false;
-        }
-        else if (health <= (maxHealth / 4))
-        {
-            Debug.Log("You are badly wounded");
-        }
-        else if (health < maxHealth)
-        {
-            Debug.Log("You are wounded, but carry on");
-        }
+        ReportCondition(health);
 
         Debug.Log("The " + enemyNames[enemyIndex] + " has " + enemyHealth[enemyIndex] +" HP!");
 
@@ -236,6 +223,25 @@ public class dungeonGame : MonoBehaviour
     {
         return Random.Range(1, 21);
     }
+
+    void ReportCondition(int health)
+    {
+        if (!IsAlive())
+        {
+            Debug.Log("You collapse to your sustained wounds");
+            playerAlive = false;
+            inCombat = false;
+        }
+        else if (health <= (maxHealth / 4))
+        {
+            Debug.Log("You are badly wounded");
+        }
+        else if (health < maxHealth)
+        {
+            Debug.Log("You are wounded, but carry on");
+        }
+    }
+
     void Start()
     {
 
@@ -666,19 +672,7 @@ public class dungeonGame : MonoBehaviour
             
         }
 
-        if (!IsAlive())
-        {
-            Debug.Log("You collapse to your sustained wounds");
-            playerAlive = false;
-        }
-        else if (health <= 5)
-        {
-            Debug.Log("You are badly wounded");
-        }
-        else if (health < 20)
-        {
-            Debug.Log("You are wounded, but carry on");
-        }
+        ReportCondition(health);
 
 
         // A3: The passage forks in two. Send the hero down one of the routes and
