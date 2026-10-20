@@ -49,6 +49,7 @@ public class dungeonGame : MonoBehaviour
             "The Entrance Hall",
             "The Guard Room",
             "The Troll Cave",
+            "The Spider Vault",
             "The Mess Hall",
             "The Barracks",
             "The Flooded Passage",
@@ -58,13 +59,14 @@ public class dungeonGame : MonoBehaviour
             "The Broken Throneroom",
         };
 
-    int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0 };
+    int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0, 0 };
 
     string[] roomDescriptions =
     {
             "A torch flickers on the wall. A stone doorway leads north.",
             "A rusty sword rests on a table. A goblin snores in the corner.",
             "You walk into a large cave littered with bones.",
+            "You walk into a cave, walls lined with thick layers of spider webs",
             "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
             "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
             "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
@@ -81,9 +83,9 @@ public class dungeonGame : MonoBehaviour
     int[] enemyArmorClass = { 10, 10, 11 };
     int[] enemyDefense = { 1, 1, 1 };
 
-    int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1 }; //index contains the enemy's index if room has an encounter, otherwise index is -1
+    int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1, -1 }; //index contains the enemy's index if room has an encounter, otherwise index is -1
 
-    bool[] visited = { false, false, false, false, false, false, false, false, false, false };
+    bool[] visited = { false, false, false, false, false, false, false, false, false, false, false };
 
     string[] loot = { "big sword", "biggest sword", "super potion", "gleaming armor", "shoes" };
 
@@ -106,6 +108,118 @@ public class dungeonGame : MonoBehaviour
         Debug.Log(roomDescriptions[index]);
     }
 
+    void CombatRound(int enemyIndex)
+    {
+        Debug.Log("You attack the " + enemyNames[enemyIndex] + "!");
+        attackRoll = Random.Range(1, 21) + totalAttack;
+        Debug.Log("You attack with an attack roll of " + attackRoll + ".");
+
+        if (attackRoll >= enemyArmorClass[enemyIndex])
+        {
+            if (attackRoll >= 20)
+            {
+                Debug.Log("You crit!");
+                enemyHealth[enemyIndex] -= ((totalAttack * 2) - enemyDefense[0]);
+            }
+            else
+            {
+                Debug.Log("You hit!");
+                enemyHealth[enemyIndex] -= (totalAttack - enemyDefense[enemyIndex]);
+            }
+            if (enemyHealth[enemyIndex] <= 0)
+            {
+                Debug.Log("The " + enemyNames[enemyIndex] + " is defeated!");
+                inCombat = false;
+            }
+        }
+        else
+        {
+            Debug.Log("You miss...");
+        }
+        if (enemyHealth[enemyIndex] > 0)
+        {
+            Debug.Log("The " + enemyNames[enemyIndex] + " attacks you!");
+            int enemyRoll = Random.Range(1, 21);
+            Debug.Log("The " + enemyNames[enemyIndex] + " attacks with an attack roll of " + enemyRoll + ".");
+
+            if (enemyRoll >= armorClass)
+            {
+                if (enemyRoll == 20)
+                {
+                    Debug.Log("The " + enemyNames[enemyIndex] + " crits!");
+                    health -= ((enemyAttack[0] * 2) - totalDefense);
+                }
+                else
+                {
+                    Debug.Log("The " + enemyNames[enemyIndex] + " hits!");
+                    health -= (enemyAttack[enemyIndex] - totalDefense);
+                }
+            }
+            else
+            {
+                Debug.Log("The " + enemyNames[enemyIndex] + " misses...");
+            }
+        }
+        Debug.Log("You have " + health + " HP!");
+
+        if (health <= 0)
+        {
+            Debug.Log("You collapse to your sustained wounds");
+            playerAlive = false;
+            inCombat = false;
+        }
+        else if (health <= (maxHealth / 4))
+        {
+            Debug.Log("You are badly wounded");
+        }
+        else if (health < maxHealth)
+        {
+            Debug.Log("You are wounded, but carry on");
+        }
+
+        Debug.Log("The " + enemyNames[enemyIndex] + " has " + enemyHealth[enemyIndex] +" HP!");
+
+    }
+
+    void Combat(int enemyIndex)
+    {
+        inCombat = true;
+        while (inCombat)
+        {
+            foreach (string item in inventory)
+            {
+                if (item == "rusted shortsword")
+                {
+                    shortSwordCheck = true;
+                }
+                if (item == "polished sword")
+                {
+                    swordCheck = true;
+                }
+                if (item == "cloak")
+                {
+                    cloakCheck = true;
+                }
+            }
+            if (shortSwordCheck)
+            {
+                totalAttack = attack + shortSwordBonus;
+            }
+            if (swordCheck)
+            {
+                totalAttack = attack + swordBonus;
+            }
+            if (shortSwordCheck && swordCheck)
+            {
+                totalAttack = attack + shortSwordBonus + swordBonus;
+            }
+            if (cloakCheck)
+            {
+                totalDefense = defense + cloakBonus;
+            }
+            CombatRound(enemyIndex);
+        }
+    }
     void Start()
     {
 
@@ -144,7 +258,6 @@ public class dungeonGame : MonoBehaviour
         gold += roomGold[0];
         Debug.Log("You move into the next room.");
 
-        int goblinRoll = 0;
 
         Debug.Log("");
         //Debug.Log("The Guard Room");
@@ -157,111 +270,111 @@ public class dungeonGame : MonoBehaviour
         if (roomEnemy[currentRoom] != -1)
         {
             Debug.Log("The " + enemyNames[0] + " lunges at you!");
-
-            for (int i = 1; ; i++)
-            {
-                foreach (string item in inventory)
-                {
-                    if (item == "rusted shortsword")
-                    {
-                        shortSwordCheck = true;
-                    }
-                    if (item == "polished sword")
-                    {
-                        swordCheck = true;
-                    }
-                    if (item == "cloak")
-                    {
-                        cloakCheck = true;
-                    }
-                }
-                if (shortSwordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus;
-                }
-                if (swordCheck)
-                {
-                    totalAttack = attack + swordBonus;
-                }
-                if (shortSwordCheck && swordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus + swordBonus;
-                }
-                if (cloakCheck)
-                {
-                    totalDefense = defense + cloakBonus;
-                }
-                Debug.Log("Turn " + i + ".");
-
-                Debug.Log("The " + enemyNames[0] + " attacks you!");
-                goblinRoll = Random.Range(1, 21);
-                Debug.Log("The " + enemyNames[0] + " attacks with an attack roll of " + goblinRoll + ".");
-
-                if (goblinRoll >= armorClass)
-                {
-                    if (goblinRoll == 20)
-                    {
-                        Debug.Log("The " + enemyNames[0] + " crits!");
-                        health -= ((enemyAttack[0] * 2) - totalDefense);
-                    }
-                    else
-                    {
-                        Debug.Log("The " + enemyNames[0] + " hits!");
-                        health -= (enemyAttack[0] - totalDefense);
-                    }
-                }
-                else
-                {
-                    Debug.Log("The " + enemyNames[0] + " misses...");
-                }
-
-                Debug.Log("You have " + health + " HP!");
-
-                if (health <= 0)
-                {
-                    Debug.Log("You collapse to your sustained wounds");
-                    playerAlive = false;
-                    break;
-                }
-                else if (health <= (maxHealth / 4))
-                {
-                    Debug.Log("You are badly wounded");
-                }
-                else if (health < maxHealth)
-                {
-                    Debug.Log("You are wounded, but carry on");
-                }
-
-                Debug.Log("You attack the " + enemyNames[0] + "!");
-                attackRoll = Random.Range(1, 21) + totalAttack;
-                Debug.Log("You attack with an attack roll of " + attackRoll + ".");
-
-                if (attackRoll >= enemyArmorClass[0])
-                {
-                    if (attackRoll >= 20)
-                    {
-                        Debug.Log("You crit!");
-                        enemyHealth[0] -= ((totalAttack * 2) - enemyDefense[0]);
-                    }
-                    else
-                    {
-                        Debug.Log("You hit!");
-                        enemyHealth[0] -= (totalAttack - enemyDefense[0]);
-                    }
-                    if (enemyHealth[0] <= 0)
-                    {
-                        Debug.Log("You defeat the " + enemyNames[0] + "!");
-                        break;
-                    }
-                }
-                else
-                {
-                    Debug.Log("You miss...");
-                }
-
-                Debug.Log("The " + enemyNames[0] + " has " + enemyHealth[0] + " HP!");
-
-            }
+            Combat(0);
+            //for (int i = 1; ; i++)
+            //{
+            //    foreach (string item in inventory)
+            //    {
+            //        if (item == "rusted shortsword")
+            //        {
+            //            shortSwordCheck = true;
+            //        }
+            //        if (item == "polished sword")
+            //        {
+            //            swordCheck = true;
+            //        }
+            //        if (item == "cloak")
+            //        {
+            //            cloakCheck = true;
+            //        }
+            //    }
+            //    if (shortSwordCheck)
+            //    {
+            //        totalAttack = attack + shortSwordBonus;
+            //    }
+            //    if (swordCheck)
+            //    {
+            //        totalAttack = attack + swordBonus;
+            //    }
+            //    if (shortSwordCheck && swordCheck)
+            //    {
+            //        totalAttack = attack + shortSwordBonus + swordBonus;
+            //    }
+            //    if (cloakCheck)
+            //    {
+            //        totalDefense = defense + cloakBonus;
+            //    }
+            //    Debug.Log("Turn " + i + ".");
+            //
+            //    Debug.Log("The " + enemyNames[0] + " attacks you!");
+            //    goblinRoll = Random.Range(1, 21);
+            //    Debug.Log("The " + enemyNames[0] + " attacks with an attack roll of " + goblinRoll + ".");
+            //
+            //    if (goblinRoll >= armorClass)
+            //    {
+            //        if (goblinRoll == 20)
+            //        {
+            //            Debug.Log("The " + enemyNames[0] + " crits!");
+            //            health -= ((enemyAttack[0] * 2) - totalDefense);
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("The " + enemyNames[0] + " hits!");
+            //            health -= (enemyAttack[0] - totalDefense);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("The " + enemyNames[0] + " misses...");
+            //    }
+            //
+            //    Debug.Log("You have " + health + " HP!");
+            //
+            //    if (health <= 0)
+            //    {
+            //        Debug.Log("You collapse to your sustained wounds");
+            //        playerAlive = false;
+            //        break;
+            //    }
+            //    else if (health <= (maxHealth / 4))
+            //    {
+            //        Debug.Log("You are badly wounded");
+            //    }
+            //    else if (health < maxHealth)
+            //    {
+            //        Debug.Log("You are wounded, but carry on");
+            //    }
+            //
+            //    Debug.Log("You attack the " + enemyNames[0] + "!");
+            //    attackRoll = Random.Range(1, 21) + totalAttack;
+            //    Debug.Log("You attack with an attack roll of " + attackRoll + ".");
+            //
+            //    if (attackRoll >= enemyArmorClass[0])
+            //    {
+            //        if (attackRoll >= 20)
+            //        {
+            //            Debug.Log("You crit!");
+            //            enemyHealth[0] -= ((totalAttack * 2) - enemyDefense[0]);
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("You hit!");
+            //            enemyHealth[0] -= (totalAttack - enemyDefense[0]);
+            //        }
+            //        if (enemyHealth[0] <= 0)
+            //        {
+            //            Debug.Log("You defeat the " + enemyNames[0] + "!");
+            //            break;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("You miss...");
+            //    }
+            //
+            //    Debug.Log("The " + enemyNames[0] + " has " + enemyHealth[0] + " HP!");
+            //
+            //}
         }
 
         if(playerAlive == false)
@@ -280,261 +393,235 @@ public class dungeonGame : MonoBehaviour
         if (roomEnemy[currentRoom] != -1)
         {
             Debug.Log("An " + enemyNames[1] + " in the back of the room hears you enter, and charges at you!");
+            Combat(1);
 
-            int ogreRoll = 0;
-
-            for (int i = 1; ; i++)
-            {
-                foreach (string item in inventory)
-                {
-                    if (item == "rusted shortsword")
-                    {
-                        shortSwordCheck = true;
-                    }
-                    if (item == "polished sword")
-                    {
-                        swordCheck = true;
-                    }
-                    if (item == "cloak")
-                    {
-                        cloakCheck = true;
-                    }
-                }
-                if (shortSwordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus;
-                }
-                if (swordCheck)
-                {
-                    totalAttack = attack + swordBonus;
-                }
-                if (shortSwordCheck && swordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus + swordBonus;
-                }
-                if (cloakCheck)
-                {
-                    totalDefense = defense + cloakBonus;
-                }
-                Debug.Log("Turn " + i + ".");
-
-                if (i % 2 == 0)
-                {
-                    Debug.Log("The " + enemyNames[1] + " struggles to regain its balance after its swing and cannot attack!");
-                }
-                else
-                {
-                    Debug.Log("The " + enemyNames[1] + " attacks you with its mighty club!");
-                    ogreRoll = Random.Range(1, 21);
-                    Debug.Log("The " + enemyNames[1] + " attacks with an attack roll of " + ogreRoll + ".");
-
-                    if (ogreRoll >= armorClass)
-                    {
-                        if (ogreRoll == 20)
-                        {
-                            Debug.Log("The " + enemyNames[1] + " crits!");
-                            health -= ((enemyAttack[1] * 2) - totalDefense);
-                        }
-                        else
-                        {
-                            Debug.Log("The " + enemyNames[1] + " hits!");
-                            health -= (enemyAttack[1] - totalDefense);
-                        }
-                    }
-                    else
-                    {
-                        Debug.Log("The " + enemyNames[1] + " misses...");
-                    }
-
-                    Debug.Log("You have " + health + " HP!");
-
-                    if (health <= 0)
-                    {
-                        Debug.Log("You collapse to your sustained wounds");
-                        playerAlive = false;
-                        break;
-                    }
-                    else if (health <= 5)
-                    {
-                        Debug.Log("You are badly wounded");
-                    }
-                    else if (health < 20)
-                    {
-                        Debug.Log("You are wounded, but carry on");
-                    }
-                }
-                Debug.Log("You attack the " + enemyNames[1] + "!");
-                attackRoll = Random.Range(1, 21) + totalAttack;
-                Debug.Log("You attack with an attack roll of " + attackRoll + ".");
-
-                if (attackRoll >= enemyArmorClass[1])
-                {
-                    if (attackRoll >= 20)
-                    {
-                        Debug.Log("You crit!");
-                        enemyHealth[1] -= ((totalAttack * 2) - enemyDefense[1]);
-                    }
-                    else
-                    {
-                        Debug.Log("You hit!");
-                        enemyHealth[1] -= (totalAttack - enemyDefense[1]);
-                    }
-                    if (enemyHealth[1] <= 0)
-                    {
-                        Debug.Log("You defeat the " + enemyNames[1] + "!");
-                        break;
-                    }
-                }
-                else
-                {
-                    Debug.Log("You miss...");
-                }
-
-                Debug.Log("The " + enemyNames[1] + " has " + enemyHealth[1] + " HP!");
-
-            }
-
-            if (playerAlive == false)
-            {
-                playerAlive = true;
-                health = 1;
-            }
+            //for (int i = 1; ; i++)
+            //{
+            //    
+            //    Debug.Log("Turn " + i + ".");
+            //
+            //    if (i % 2 == 0)
+            //    {
+            //        Debug.Log("The " + enemyNames[1] + " struggles to regain its balance after its swing and cannot attack!");
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("The " + enemyNames[1] + " attacks you with its mighty club!");
+            //        ogreRoll = Random.Range(1, 21);
+            //        Debug.Log("The " + enemyNames[1] + " attacks with an attack roll of " + ogreRoll + ".");
+            //
+            //        if (ogreRoll >= armorClass)
+            //        {
+            //            if (ogreRoll == 20)
+            //            {
+            //                Debug.Log("The " + enemyNames[1] + " crits!");
+            //                health -= ((enemyAttack[1] * 2) - totalDefense);
+            //            }
+            //            else
+            //            {
+            //                Debug.Log("The " + enemyNames[1] + " hits!");
+            //                health -= (enemyAttack[1] - totalDefense);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("The " + enemyNames[1] + " misses...");
+            //        }
+            //
+            //        Debug.Log("You have " + health + " HP!");
+            //
+            //        if (health <= 0)
+            //        {
+            //            Debug.Log("You collapse to your sustained wounds");
+            //            playerAlive = false;
+            //            break;
+            //        }
+            //        else if (health <= 5)
+            //        {
+            //            Debug.Log("You are badly wounded");
+            //        }
+            //        else if (health < 20)
+            //        {
+            //            Debug.Log("You are wounded, but carry on");
+            //        }
+            //    }
+            //    Debug.Log("You attack the " + enemyNames[1] + "!");
+            //    attackRoll = Random.Range(1, 21) + totalAttack;
+            //    Debug.Log("You attack with an attack roll of " + attackRoll + ".");
+            //
+            //    if (attackRoll >= enemyArmorClass[1])
+            //    {
+            //        if (attackRoll >= 20)
+            //        {
+            //            Debug.Log("You crit!");
+            //            enemyHealth[1] -= ((totalAttack * 2) - enemyDefense[1]);
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("You hit!");
+            //            enemyHealth[1] -= (totalAttack - enemyDefense[1]);
+            //        }
+            //        if (enemyHealth[1] <= 0)
+            //        {
+            //            Debug.Log("You defeat the " + enemyNames[1] + "!");
+            //            break;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("You miss...");
+            //    }
+            //
+            //    Debug.Log("The " + enemyNames[1] + " has " + enemyHealth[1] + " HP!");
+            //
+            //}
+            //
+            //if (playerAlive == false)
+            //{
+            //    playerAlive = true;
+            //    health = 1;
+            //}
         }
+
+        Debug.Log("You find " + roomGold[2] + " gold");
+        gold += roomGold[2];
+
+        currentRoom = 3;
+        ShowRoom(currentRoom);
 
         if (roomEnemy[currentRoom] != -1)
         {
             Debug.Log("A great spider descends from a hole in the roof of the cave!");
-
-            int spiderRoll = 0;
-            int spiderPoison = 0;
-
-            for (int i = 1; ; i++)
-            {
-                foreach (string item in inventory)
-                {
-                    if (item == "rusted shortsword")
-                    {
-                        shortSwordCheck = true;
-                    }
-                    if (item == "polished sword")
-                    {
-                        swordCheck = true;
-                    }
-                    if (item == "cloak")
-                    {
-                        cloakCheck = true;
-                    }
-                }
-                if (shortSwordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus;
-                }
-                if (swordCheck)
-                {
-                    totalAttack = attack + swordBonus;
-                }
-                if (shortSwordCheck && swordCheck)
-                {
-                    totalAttack = attack + shortSwordBonus + swordBonus;
-                }
-                if (cloakCheck)
-                {
-                    totalDefense = defense + cloakBonus;
-                }
-                Debug.Log("Turn " + i + ".");
-
-                if (spiderPoison > 0)
-                {
-                    Debug.Log("Icy poison runs in your veins...");
-                    spiderPoison -= 1;
-                    Debug.Log("You take 2 damage!");
-                    health -= 2;
-                    if (health <= 0)
-                    {
-                        Debug.Log("You collapse to your sustained wounds");
-                        playerAlive = false;
-                        break;
-                    }
-                    else if (health <= 5)
-                    {
-                        Debug.Log("You are badly wounded");
-                    }
-                    else if (health < 20)
-                    {
-                        Debug.Log("You are wounded, but carry on");
-                    }
-                }
-
-                Debug.Log("The " + enemyNames[2] + " attacks you with its venomous bite!");
-                spiderRoll = Random.Range(1, 21);
-                Debug.Log("The " + enemyNames[2] + " attacks with an attack roll of " + spiderRoll + ".");
-
-                if (spiderRoll >= armorClass)
-                {
-                    spiderPoison += 3;
-                    if (spiderRoll == 20)
-                    {
-                        Debug.Log("The " + enemyNames[2] + " crits!");
-                        health -= ((enemyAttack[2] * 2) - totalDefense);
-                    }
-                    else
-                    {
-                        Debug.Log("The " + enemyNames[2] + " hits!");
-                        health -= (enemyAttack[2] - totalDefense);
-                    }
-                }
-                else
-                {
-                    Debug.Log("The " + enemyNames[2] + " misses...");
-                }
-
-                Debug.Log("You have " + health + " HP!");
-
-                if (health <= 0)
-                {
-                    Debug.Log("You collapse to your sustained wounds");
-                    playerAlive = false;
-                    break;
-                }
-                else if (health <= 5)
-                {
-                    Debug.Log("You are badly wounded");
-                }
-                else if (health < 20)
-                {
-                    Debug.Log("You are wounded, but carry on");
-                }
-
-                Debug.Log("You attack the " + enemyNames[2] + "!");
-                attackRoll = Random.Range(1, 21) + totalAttack;
-                Debug.Log("You attack with an attack roll of " + attackRoll + ".");
-
-                if (attackRoll >= enemyArmorClass[2])
-                {
-                    if (attackRoll >= 20)
-                    {
-                        Debug.Log("You crit!");
-                        enemyHealth[2] -= ((totalAttack * 2) - enemyDefense[2]);
-                    }
-                    else
-                    {
-                        Debug.Log("You hit!");
-                        enemyHealth[2] -= (totalAttack - enemyDefense[2]);
-                    }
-                    if (enemyHealth[2] <= 0)
-                    {
-                        Debug.Log("You defeat the " + enemyNames[2] + "!");
-                        break;
-                    }
-                }
-                else
-                {
-                    Debug.Log("You miss...");
-                }
-
-                Debug.Log("The " + enemyNames[2] + " has " + enemyHealth[2] + " HP!");
-
-            }
+            Combat(2);
+            //int spiderPoison = 0;
+            //
+            //for (int i = 1; ; i++)
+            //{
+            //    foreach (string item in inventory)
+            //    {
+            //        if (item == "rusted shortsword")
+            //        {
+            //            shortSwordCheck = true;
+            //        }
+            //        if (item == "polished sword")
+            //        {
+            //            swordCheck = true;
+            //        }
+            //        if (item == "cloak")
+            //        {
+            //            cloakCheck = true;
+            //        }
+            //    }
+            //    if (shortSwordCheck)
+            //    {
+            //        totalAttack = attack + shortSwordBonus;
+            //    }
+            //    if (swordCheck)
+            //    {
+            //        totalAttack = attack + swordBonus;
+            //    }
+            //    if (shortSwordCheck && swordCheck)
+            //    {
+            //        totalAttack = attack + shortSwordBonus + swordBonus;
+            //    }
+            //    if (cloakCheck)
+            //    {
+            //        totalDefense = defense + cloakBonus;
+            //    }
+            //    Debug.Log("Turn " + i + ".");
+            //
+            //    if (spiderPoison > 0)
+            //    {
+            //        Debug.Log("Icy poison runs in your veins...");
+            //        spiderPoison -= 1;
+            //        Debug.Log("You take 2 damage!");
+            //        health -= 2;
+            //        if (health <= 0)
+            //        {
+            //            Debug.Log("You collapse to your sustained wounds");
+            //            playerAlive = false;
+            //            break;
+            //        }
+            //        else if (health <= 5)
+            //        {
+            //            Debug.Log("You are badly wounded");
+            //        }
+            //        else if (health < 20)
+            //        {
+            //            Debug.Log("You are wounded, but carry on");
+            //        }
+            //    }
+            //
+            //    Debug.Log("The " + enemyNames[2] + " attacks you with its venomous bite!");
+            //    spiderRoll = Random.Range(1, 21);
+            //    Debug.Log("The " + enemyNames[2] + " attacks with an attack roll of " + spiderRoll + ".");
+            //
+            //    if (spiderRoll >= armorClass)
+            //    {
+            //        spiderPoison += 3;
+            //        if (spiderRoll == 20)
+            //        {
+            //            Debug.Log("The " + enemyNames[2] + " crits!");
+            //            health -= ((enemyAttack[2] * 2) - totalDefense);
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("The " + enemyNames[2] + " hits!");
+            //            health -= (enemyAttack[2] - totalDefense);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("The " + enemyNames[2] + " misses...");
+            //    }
+            //
+            //    Debug.Log("You have " + health + " HP!");
+            //
+            //    if (health <= 0)
+            //    {
+            //        Debug.Log("You collapse to your sustained wounds");
+            //        playerAlive = false;
+            //        break;
+            //    }
+            //    else if (health <= 5)
+            //    {
+            //        Debug.Log("You are badly wounded");
+            //    }
+            //    else if (health < 20)
+            //    {
+            //        Debug.Log("You are wounded, but carry on");
+            //    }
+            //
+            //    Debug.Log("You attack the " + enemyNames[2] + "!");
+            //    attackRoll = Random.Range(1, 21) + totalAttack;
+            //    Debug.Log("You attack with an attack roll of " + attackRoll + ".");
+            //
+            //    if (attackRoll >= enemyArmorClass[2])
+            //    {
+            //        if (attackRoll >= 20)
+            //        {
+            //            Debug.Log("You crit!");
+            //            enemyHealth[2] -= ((totalAttack * 2) - enemyDefense[2]);
+            //        }
+            //        else
+            //        {
+            //            Debug.Log("You hit!");
+            //            enemyHealth[2] -= (totalAttack - enemyDefense[2]);
+            //        }
+            //        if (enemyHealth[2] <= 0)
+            //        {
+            //            Debug.Log("You defeat the " + enemyNames[2] + "!");
+            //            break;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Debug.Log("You miss...");
+            //    }
+            //
+            //    Debug.Log("The " + enemyNames[2] + " has " + enemyHealth[2] + " HP!");
+            //
+            //}
         }
         if (!playerAlive)
         {
@@ -542,8 +629,8 @@ public class dungeonGame : MonoBehaviour
             health = 1;
         }
 
-        Debug.Log("You find " + roomGold[2] + " gold");
-        gold += roomGold[2];
+        Debug.Log("You find " + roomGold[3] + " gold");
+        gold += roomGold[3];
 
         Debug.Log("You find the remains of a small campfire someone left in the cave. You light it to rest from the grueling gauntlet of combat.");
         for(int i = 5; i > 0; i--)
@@ -590,16 +677,16 @@ public class dungeonGame : MonoBehaviour
 
             Debug.Log("");
             //Debug.Log("The Mess Hall");
-            currentRoom = 3;
+            currentRoom = 4;
             ShowRoom(currentRoom);
-            Debug.Log("In a large alcove you find a cookfire with a large pot filled with bubble stew. You eat from it to regain your strength.");
+            Debug.Log("In a large alcove you find a cookfire with a large pot filled with bubbling stew. You eat from it to regain your strength.");
             health += 3;
             if (health >= maxHealth)
             {
                 health = maxHealth;
             }
-            Debug.Log("You find " + roomGold[3] + " gold");
-            gold += roomGold[3];
+            Debug.Log("You find " + roomGold[4] + " gold");
+            gold += roomGold[4];
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
         else 
@@ -608,30 +695,30 @@ public class dungeonGame : MonoBehaviour
 
             Debug.Log("");
             //Debug.Log("The Barracks");
-            currentRoom = 4;
+            currentRoom = 5;
             ShowRoom(currentRoom);
             Debug.Log("You check the chests for anything of use, but unfortunately find nothing that would aid your escape.");
-            Debug.Log("You find " + roomGold[4] + " gold");
-            gold += roomGold[4];
+            Debug.Log("You find " + roomGold[5] + " gold");
+            gold += roomGold[5];
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
 
 
         Debug.Log("");
         //Debug.Log("The Flooded Passage");
-        currentRoom = 5;
+        currentRoom = 6;
         ShowRoom(currentRoom);
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
         openInvSlot += 1;
         inventory[openInvSlot] += "key";
-        Debug.Log("You find " + roomGold[5] + " gold");
-        gold += roomGold[5];
+        Debug.Log("You find " + roomGold[6] + " gold");
+        gold += roomGold[6];
         Debug.Log("You move into the next room.");
 
 
         Debug.Log("");
         //Debug.Log("The Treasure Room");
-        currentRoom = 6;
+        currentRoom = 7;
         Debug.Log(roomNames[currentRoom]);
 
         roomCount += 1;
@@ -641,13 +728,13 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log(roomDescriptions[currentRoom]);
-        Debug.Log("You find " + roomGold[6] + " gold");
-        gold += roomGold[6];
+        Debug.Log("You find " + roomGold[7] + " gold");
+        gold += roomGold[7];
         Debug.Log("You move into the next room.");
 
         Debug.Log("");
         //Debug.Log("The Armory");
-        currentRoom = 7; 
+        currentRoom = 8; 
         ShowRoom(currentRoom);
 
         for (int i = 0; i < inventory.Length; i++)
@@ -677,8 +764,8 @@ public class dungeonGame : MonoBehaviour
             }
         }
 
-        Debug.Log("You find " + roomGold[7] + " gold");
-        gold += roomGold[7];
+        Debug.Log("You find " + roomGold[8] + " gold");
+        gold += roomGold[8];
 
         Debug.Log("You move into the next room.");
 
@@ -686,22 +773,22 @@ public class dungeonGame : MonoBehaviour
         // int potionCount = 0;
         Debug.Log("");
         //Debug.Log("The Merchant's Room");
-        currentRoom = 8;
+        currentRoom = 9;
         ShowRoom(currentRoom);
         Debug.Log("The Merchant is selling health potions for " + potionCost + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
         Debug.Log("You can currently afford " + (gold / potionCost) + "potions, which would leave your coin purse with only " + (gold % potionCost) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
         Debug.Log("You find " + roomGold[8] + " gold");
-        gold += roomGold[8];
+        gold += roomGold[9];
         Debug.Log("You leave through an ornate door behind the Merchant's stall that you did not see upon entering.");
 
 
         Debug.Log("");
         //Debug.Log("The Broken Throneroom");
-        currentRoom = 9;
+        currentRoom = 10;
         ShowRoom(currentRoom);
         Debug.Log("You see that the throne would make for a good point to secure a rope to.");
-        Debug.Log("You find " + roomGold[9] + " gold");
-        gold += roomGold[9];
+        Debug.Log("You find " + roomGold[10] + " gold");
+        gold += roomGold[10];
         for (int i = 0; i < inventory.Length; i++)
         {
             if (inventory[i] == "rope")
