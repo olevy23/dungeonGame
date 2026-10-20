@@ -43,6 +43,7 @@ public class dungeonGame : MonoBehaviour
     int lowHealth = 4;
     int potionPrice = 30;
     int healAmount = 10;
+    int turnCount = 0;
 
     string[] roomNames =
     {
@@ -134,6 +135,8 @@ public class dungeonGame : MonoBehaviour
 
     void CombatRound(int enemyIndex)
     {
+        TurnPass();
+        Debug.Log("Turn " + turnCount);
         Debug.Log("You attack the " + enemyNames[enemyIndex] + "!");
         attackRoll = RollDice() + totalAttack;
         Debug.Log("You attack with an attack roll of " + attackRoll + ".");
@@ -284,6 +287,12 @@ public class dungeonGame : MonoBehaviour
             health = maxHealth;
         }
     }
+
+    int TurnPass(int count = 1)
+    {
+        return turnCount += count;
+    }
+
     void Start()
     {
 
@@ -613,6 +622,9 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You find the remains of a small campfire someone left in the cave. You light it to rest from the grueling gauntlet of combat.");
         for(int i = 5; i > 0; i--)
         {
+            TurnPass();
+            Debug.Log("Turn " + turnCount);
+
             Debug.Log("The fire will remain lit for " + i + " more turns.");
             Heal(2);
             if (health == maxHealth)
