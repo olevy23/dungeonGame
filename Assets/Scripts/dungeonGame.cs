@@ -20,6 +20,7 @@ public class dungeonGame : MonoBehaviour
     int armorClass = 10;
     int agility = 1;
     int gold = 0;
+    int cursedCoin = 10;
     //bool hasKey = false;
     //bool hasRope = false;
     bool playerAlive = true;
@@ -245,6 +246,11 @@ public class dungeonGame : MonoBehaviour
         return gold += amount;
         
     }
+
+    int RemoveCoin(int coinCleanse)
+    {
+        return cursedCoin -= coinCleanse;
+    }
     
     int RollDice()
     {
@@ -310,6 +316,9 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("Starting Loot: " + loot[4]);
         openInvSlot += 1;
         inventory[openInvSlot] += loot[4];
+
+        RemoveCoin(1);
+        Debug.Log("You have " + cursedCoin + " cursed coins.");
 
         Debug.Log("");
         //Debug.Log("The Entrance Hall");
