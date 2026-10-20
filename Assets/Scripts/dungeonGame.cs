@@ -12,45 +12,40 @@ using UnityEngine.UI;
 // ==========================================================================
 public class dungeonGame : MonoBehaviour
 {
-    void Start()
+    string playerName = "Escapee";
+    int health = 30;
+    int maxHealth = 30;
+    int attack = 1;
+    int defense = 1;
+    int armorClass = 10;
+    int agility = 1;
+    int gold = 0;
+    //bool hasKey = false;
+    //bool hasRope = false;
+    bool playerAlive = true;
+    int roomCount = 0;
+    int attackRoll = 0;
+    int currentRoom = -1;
+    int openInvSlot = -1;
+
+    int shortSwordBonus = 1;
+    int swordBonus = 1;
+    int cloakBonus = 1;
+    bool shortSwordCheck = false;
+    bool swordCheck = false;
+    bool cloakCheck = false;
+    int totalAttack = 0;
+    int totalDefense = 0;
+
+    bool inCombat = false;
+    int currentEnemy = 0;
+
+    int lowHealth = 4;
+    int potionPrice = 30;
+    int healAmount = 20;
+
+    string[] roomNames =
     {
-        // (PART B) TODO B1: declare your stats here, at the very top of Start,
-        //          once you have had the Variables lecture. You will need:
-        //            playerName (string), health (int), attack (int),
-        //            agility (int), gold (int), hasKey (bool),
-        //            goblinHealth (int), goblinAttack (int).
-
-        // ===== ALREADY BUILT IN CLASS (Intro lecture): the opening + two rooms =====
-
-        Debug.Log("=== THE DUNGEON ===");
-        string playerName = "Escapee";
-        int health = 30;
-        int maxHealth = 30;
-        int attack = 1;
-        int defense = 1;
-        int armorClass = 10;
-        int agility = 1;
-        int gold = 0;
-        //bool hasKey = false;
-        //bool hasRope = false;
-        bool playerAlive = true;
-        int roomCount = 0;
-        int attackRoll = 0;
-        int currentRoom = -1;
-        int openInvSlot = -1;
-
-        int shortSwordBonus = 1;
-        int swordBonus = 1;
-        int cloakBonus = 1;
-        bool shortSwordCheck = false;
-        bool swordCheck = false;
-        bool cloakCheck = false;
-        int totalAttack = attack;
-        int totalDefense = defense;
-
-
-        string[] roomNames = 
-        {   
             "The Entrance Hall",
             "The Guard Room",
             "The Troll Cave",
@@ -63,34 +58,45 @@ public class dungeonGame : MonoBehaviour
             "The Broken Throneroom",
         };
 
-        int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0 };
+    int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0 };
 
-        string[] roomDescriptions = 
-        {   
+    string[] roomDescriptions =
+    {
             "A torch flickers on the wall. A stone doorway leads north.",
             "A rusty sword rests on a table. A goblin snores in the corner.",
             "You walk into a large cave littered with bones.",
             "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
             "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
             "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
-            "It seems this room has been raided. You find " + roomGold[6] + " gold.",
+            "It seems this room has been raided.",
             "This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.",
             "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
             "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
         };
-        string[] inventory = { "", "", "", "", "", "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak, plus contents of loot[]
+    string[] inventory = { "", "", "", "", "", "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak, plus contents of loot[]
 
-        string[] enemyNames = { "goblin", "ogre", "spider" };
-        int[] enemyHealth = { 15, 20, 20};
-        int[] enemyAttack = { 2, 3, 2};
-        int[] enemyArmorClass = { 10, 10, 11};
-        int[] enemyDefense = { 1, 1, 1};
+    string[] enemyNames = { "goblin", "ogre", "spider" };
+    int[] enemyHealth = { 15, 20, 20 };
+    int[] enemyAttack = { 2, 3, 2 };
+    int[] enemyArmorClass = { 10, 10, 11 };
+    int[] enemyDefense = { 1, 1, 1 };
 
-        int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1}; //index contains the enemy's index if room has an encounter, otherwise index is -1
+    int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1 }; //index contains the enemy's index if room has an encounter, otherwise index is -1
 
-        bool[] visited = { false, false, false, false, false, false, false, false, false, false };
+    bool[] visited = { false, false, false, false, false, false, false, false, false, false };
 
-        string[] loot = { "big sword", "biggest sword", "super potion", "gleaming armor", "shoes"};
+    string[] loot = { "big sword", "biggest sword", "super potion", "gleaming armor", "shoes" };
+
+    void ShowTitle()
+    {
+        Debug.Log("=== THE DUNGEON ===");
+    }
+
+    void Start()
+    {
+
+        ShowTitle();
+        
 
         Debug.Log("Welcome, " + playerName + ". Your escape begins."); // replace Hero with the name of your player.
 
@@ -641,16 +647,8 @@ public class dungeonGame : MonoBehaviour
         }
 
 
-        // ======================================================================
-        // PART A  -  after the INTRO lecture (Debug.Log only)
-        // ======================================================================
-
-        // TODO A1: FIX THE BROKEN ROOM below. It has bugs that stops the program
-        //          from running. Un-comment the lines, find the bug(s), fix it,
-        //          and add a // comment saying what was wrong.
-
         Debug.Log("");
-        //Debug.Log("The Flooded Passage"); // line missing closing semi-colon
+        //Debug.Log("The Flooded Passage");
         currentRoom = 5;
         Debug.Log(roomNames[currentRoom]);
         visited[currentRoom] = true;
@@ -671,7 +669,7 @@ public class dungeonGame : MonoBehaviour
 
 
         Debug.Log("");
-        //Debug.Log("The Treasure Room"); // string was missing quotation marks
+        //Debug.Log("The Treasure Room");
         currentRoom = 6;
         Debug.Log(roomNames[currentRoom]);
         visited[currentRoom] = true;
@@ -682,13 +680,11 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("As you enter, you notice the room is filled with a red glow");
         }
 
-        Debug.Log(roomDescriptions[currentRoom]); // wow that's a lot of gold! no programming bug, however
+        Debug.Log(roomDescriptions[currentRoom]);
+        Debug.Log("You find " + roomGold[6] + " gold");
         gold += roomGold[6];
-        Debug.Log("You move into the next room."); // line was missing closing semicolon and string was missing closing quotation mark
+        Debug.Log("You move into the next room.");
 
-
-        // TODO A2: write at least one of your OWN room - a Room Name line,
-        //          a description line, and a line describing how you exit. 
         Debug.Log("");
         //Debug.Log("The Armory");
         currentRoom = 7;
@@ -756,8 +752,7 @@ public class dungeonGame : MonoBehaviour
         gold += roomGold[8];
         Debug.Log("You leave through an ornate door behind the Merchant's stall that you did not see upon entering.");
 
-        // TODO A3: write the EXIT room - a final "room" and description that leads the
-        //          player out of the dungeon.
+
         Debug.Log("");
         //Debug.Log("The Broken Throneroom");
         currentRoom = 9;
@@ -798,187 +793,140 @@ public class dungeonGame : MonoBehaviour
         }
         Debug.Log("You escape the dungeon with " + gold + " gold!");
 
-        // ======================================================================
-        // PART B  -  after the VARIABLES lecture (variables & operators)
-        // ======================================================================
 
-        // TODO B2: FIX THE BROKEN ROOM below. It has bugs that stops the program
-        //          from running. Un-comment the lines, find the bug(s), fix it,
-        //          and add a // comment saying what was wrong.
-
-        // TODO B3: Go back through your rooms above and add an event/item to each
-        //          one that changes a stat/variable, printing the new value right
-        //          after the event. Like with the gold in the treasure room, keep
-        //          each event inside the room where it happens. Possible events:
-        //            pick up a sword to increase attack      
-        //            step on a trap        
-        //            grab the rusty key    
-        //            (your own event)
-
-        // TODO B4: In the appropriate room, add a goblin. The goblin attacks the
-        //          player and the player attacks the goblin. Use the variables
-        //          you've created in PART A to simulate this with code. After the
-        //          simulation is done, Print both healths, then print whether or 
-        //          not the goblin is defeated. 
-
-        // TODO B5: Add a new room somewhere before the exit that has a merchant. 
-        //          The merchant sells potions for 5 gold each. Print how many
-        //          potions you can afford and how much gold you will have left over. 
-
-        // TODO B6: Add a defense stat (declare it up top with the others). Use it
-        //          in your combat so the goblin's hit damage is reduced by your
-        //          defense and your hit damage is reduced by the goblin's defense
-        //          Then, add an item that raises defense in a room. 
-
-
-        // ================= PART A - CONDITIONALS (do after L7) =================
-
-        // A1: After the goblin fight, report whether the goblin was defeated or
-        //     the hero was the one who fell.                                                    check
-        // A2: At a vault door, the hero may pass only if they are carrying the
-        //     key and are still alive. If they cannot pass, report which of the
-        //     two requirements they are missing.                                             check
-
-        // A4: As the hero explores, every third room they enter has a red glow.
-        //     Given the number of the room the hero is standing in, report
-        //     whether this room has the red glow.                                            check
-        // A5: Whenever the hero takes damage, report their condition: collapsed
-        //     if no health remains, badly wounded if their health has dropped
-        //     dangerously low, or otherwise hurt but steady. This is a snippet
-        //     you will reuse a lot - go back through everything you have already
-        //     written (INCLUDING your previous assignment) and drop it in right
-        //     after every place the hero loses health (the spike trap, and
-        //     anywhere else). You will add it again in Part B after each hit the
-        //     hero takes in a fight.                                                         check
-
-
-        // ================= PART B - LOOPS (do after L8) =================
-
-        // Place the following combat encounters in different rooms of your choice.
-        // B1: A goblin blocks the way - fight it round by round until one of you
-        //     runs out of health. Give the hero and the goblin each an armor
-        //     class. On every swing, roll a die (Random.Range works well) and
-        //     compare it to the target's armor class: the blow only lands if the
-        //     roll meets or beats that armor class. On top of that, any of the
-        //     hero's landed hits can be a critical hit that deals extra damage.
-        //     Report each roll and its result, and after any round in which the
-        //     hero takes damage, run your A5 condition check.
-        // B2: Beyond the goblin waits an ogre - slow, but brutal. Fight it the
-        //     same way (armor classes, dice rolls to hit, and the hero's chance
-        //     to crit), except the ogre is so sluggish it only swings every
-        //     other round. Fight until one of them falls, and keep running your
-        //     A5 check whenever the hero takes damage.
-        // B3: Then a giant spider drops from the ceiling. Fight it just like the
-        //     ogre - dice-and-armor-class swings, the hero's crits, and it too
-        //     only strikes every other round - but its bite is venomous: any
-        //     time it lands a hit, the hero is poisoned and loses 2 health at
-        //     the start of each of the next three rounds, on top of the bite
-        //     itself. Fight until one of them falls, running your A5 check after
-        //     any damage (including the poison ticks).
-        // B4: With the fights behind them, the hero rests at a campfire,
-        //     recovering a little health each turn until fully healed or the
-        //     fire dies after a set number of turns. Report their health as it
-        //     climbs, and never let it rise above the maximum.
-
-
-
-        // A1: ROOMS INTO ARRAYS. Put your existing room names and descriptions into
-        //     two arrays (roomNames[i] and roomDescsriptions[i] describe the SAME
-        //     room). Keep the same rooms you already have (do not add or remove any).
-        // 
-
-        //     Hint: How many elements should be in the roomNames array? What about
-        //     the roomDescriptions array? Should they be different lengths or the same?
-
-
-        // A2: SHOW THE MAP. At the very start of the game, output every room name with
-        //     a single loop (a quick map of the dungeon) using Debug.Log
+        // ===== BEFORE YOU START: move shared variables up to CLASS variables =====
+        // A variable declared inside Start() cannot be seen by your other methods.
+        // Any variable that more than one method needs must live at the TOP of the
+        // class (above Start), as a class variable (field). Move these out of Start()
+        // and declare them at class level:
         //
 
-        //      Hint: What new type of loop can you use for this that works specifically
-        //      with containers?
-
-
-        // A3: MOVE BY INDEX. Keep a currentRoom number that starts at 0. Each time the
-        //     player moves on, add 1 to it and show that room's name and description
-        //     from the arrays, instead of hand-writing each room's header.
-
-
-
-        // A4: ONE INVENTORY ARRAY. Replace your separate item flags (hasKey, the
-        //     sword, the shield, and so on) with a single inventory array. Add an item
-        //     to it each time the player picks something up.
-        //
-        //     Hint: How big does this array need to be? What data type should it be?
-
-
-
-        // A5: SHOW THE LOOT. At the end of the run, print the player's whole inventory
-
-
-
-        // A6: KEY FROM THE INVENTORY. At the vault door, do not use a hasKey bool.
-        //     Check whether "key" is in the inventory array to decide if the hero may
-        //     pass.
-        //     
-
-        //     Hint: How could you use what we've previously learned (loops and ifs) to
-        //     find if a specific item is in an array?
-
-
-
-        // A7: COMBAT ITEMS, NOT PERMANENT UPGRADES. Right now picking up the
-        //     sword or shield permanently raises attack or defense. Stop doing that. Leave the
-        //     Do not increase the base stats (attack and defense) of the player.
+        //  Player stats:
+        //   playerName  (string)
+        //   health    (int)
+        //   maxHealth   (int)
+        //   attack    (int)
+        //   defense    (int)
+        //   gold     (int)
         //
 
-        //     Instead, INSIDE each fight, check the inventory and apply the appropriate bonus
-        //     only in the attack and damage calculations. For example:
-        //     If the hero is carrying the sword, add swordBonus to the attack and damage roll
-        //     If the hero is carrying the shield, subtract shieldBonus when reducing damage taken
-
-
-
-        // A8: ENEMIES INTO ARRAYS (the data, not the encounters). Right now each enemy
-        //     is a pile of separate variables (goblinHealth, goblinAttack, ogreHealth,
-        //     and so on). Put them into arrays instead (enemyNames[], enemyHealth[],
-        //     enemyAttack[], enemyArmorClass[] and enemyDefense[]), one array element
-        //     per enemy (element 0 = goblin, element 1 = ogre, element 2 = spider)
-        //    Keep each fight in its OWN room and read the enemy from the arrays by index.
-
-        //
-        //     Hint: How many arrays do you need? How many elements per array?
-
-
-        // A9: GOLD BY ROOM. Store the gold each room holds in a roomGold[] array and
-        //     total it with a loop, instead of adding gold by hand in each room. As the player
-        //     walks through each room, add however much gold is in the room to the player's
-        //     overall gold.
+        //  The map (from the Arrays homework):
+        //   roomNames   (string[])
+        //   roomDescs   (string[])
+        //   roomGold   (int[])
+        //   currentRoom  (int)
         //
 
-        //     Hint: How many elements do you need in this array? What should you do if
-        //     a room doesn't have gold in it?
-
-
-        // A10: ROOM ENEMIES. Create a roomEnemy[] array alongside your room arrays,
-        //      one slot per room, holding the index of the enemy waiting there (or -1 for none).
-        //      As currentRoom advances, if roomEnemy[currentRoom] is not -1, run the
-        //      enemy's fight. This ties each enemy to its room through the arrays.
-        //
-        //      Hint: What data type should the roomEnemy array be if it is an array of indexes?
-
-
-        // A11: TRACK VISITED ROOMS: Create a "visited" array of bools, one per room,
-        //      so you can mark the rooms the player has already been through.
+        //  The enemies (from the Arrays homework):
+        //   enemyNames  (string[])
+        //   enemyHealth  (int[])
+        //   enemyAttack  (int[])
+        //   enemyDefense (int[])
         //
 
-        //      Hint: How big should this array be? What data type should it be? What should
-        //      the starting values be?
+        //  The inventory (from the Arrays homework):
+        //   inventory   (string[])
+        //
+
+        //  Combat state (so a fight can run one round at a time later):
+        //   inCombat   (bool)
+        //   currentEnemy (int)
+        //
+
+        //  Tunable constants:
+        //   lowHealth   (const int) - the "badly wounded" cutoff
+        //   potionPrice  (const int)
+        //   healAmount  (const int) - the default amount a potion heals
+        //
+        // (If you followed the Arrays homework, the arrays are already class variables.
+        // You mainly need to lift the player stats, combat state, and constants up here.)
 
 
-        // A12: LOOT TABLE: an array of possible rewards. Print the whole table (or
-        //      pick from it) with a loop instead of writing each reward out by hand. We won't
-        //      be using this table for anything yet, but add at least three possible rewards.
-        //      Example rewards could be some kind of healing item, weapon, armor, etc.
+        // ================= PART A: METHODS I (build in this order) =================
+
+
+        // A1: Write a method, ShowTitle(), that prints the game's title banner (it
+        //   takes nothing and returns nothing). Call it at the start of the game.
+
+
+        // A2: Write a method, ShowRoom(int index), that prints that room's name and
+        //   description from your arrays. Use it everywhere you print a room by hand,
+        //   and each time the player moves to a new room.
+
+
+        // A3: Split the fight into ONE round plus a loop that repeats it. (This makes it
+        //   painless to add player input later, when each round will run on a key
+        //   press instead of inside a loop.)
+        //
+
+        //   First write CombatRound(int enemyIndex): a SINGLE exchange using the
+        //   enemy's stats from your arrays. The player attacks the enemy (enemy health
+        //   drops by the player's attack); then, ONLY IF the enemy is still alive, it
+        //   attacks back (player health drops by the enemy's attack). Report the
+        //   round. If either side has run out of health, print the outcome and set
+        //   inCombat to false.
+        //
+
+        //   Then write Combat(int enemyIndex) as a thin wrapper that runs the whole
+        //   fight for now: set currentEnemy, set inCombat to true, then keep calling
+        //   CombatRound(enemyIndex) while inCombat is true. Call Combat in each
+        //   enemy's room - Combat(0) in the Goblin's Den, Combat(1) in the Ogre's
+        //   Lair, Combat(2) in the Spider's Vault. Your three copied fight blocks
+        //   become three one-line calls, and each enemy stays in its own room.
+        //
+
+        //   (Later, when we add input, we delete this loop and call CombatRound once
+        //   each time the player chooses to attack - the round method stays the same.)
+
+
+        // A4: Write a method, IsAlive(), that returns whether the hero is still alive
+        //   (health above 0). Use the value it returns to decide the ending.
+
+
+        // A5: Write a method, AddGold(int amount), that adds the amount to the player's
+        //   gold and hands back the new total. Print the value it returns.
+
+
+        // A6: Write a method, RollDice(), that returns a random number from 1 to 20. Use
+        //   what it returns in your combat or a skill check instead of calling
+        //   Random.Range in line.
+
+
+        // A7: Write a method, ReportCondition(int health), that prints the hero's
+        //   condition: fallen if no health remains, badly wounded if it is low,
+        //   otherwise steady. Call it right after the hero takes damage, anywhere in
+        //   the dungeon.
+
+
+        // ================= PART B: METHODS II =================
+
+
+        // B1: Overload RollDice from A6 (same name, different inputs). Add
+        //   RollDice(int sides) that returns a number from 1 to the sides you pass in,
+        //   and RollDice(int min, int max) that returns a number from min to max. Now
+        //   one name rolls a d20, any-sided die, or any range you need.
+
+
+        // B2: Give healing an optional amount, so Heal() restores a sensible default and
+        //   Heal(25) restores that much - all from one method. Keep the default in a
+        //   named value.
+
+
+        // B3: Make two ways to describe a room under one name (overloading): one that
+        //   prints just the short description, and one that takes an extra value for
+        //   "look closely" that also lists the room's exits and any item in it. Now
+        //   the player can glance or examine in detail.
+
+
+        // B4: Write a method that passes time in the dungeon for a number of turns,
+        //   defaulting to 1 turn when no number is given (think "wait" versus
+        //   "wait 3"). Report each turn that passes.
+
+
+        // B5: Write a method that takes a number - say a "cursed coins" amount -
+        //   subtracts from it INSIDE the method, and prints it there. Back in Start,
+        //   print the original variable afterward and notice it did NOT change: a
+        //   parameter is the method's own copy. Then make the change actually stick by
+        //   returning the new value (or using a field).
     }
 }
