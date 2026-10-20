@@ -57,6 +57,7 @@ public class dungeonGame : MonoBehaviour
             "The Armory",
             "The Merchant's Room",
             "The Broken Throneroom",
+            "The Exit", //unused "room" to prevent array overflow if examine = true for ShowRoom()
         };
 
     int[] roomGold = { 0, 10, 3, 5, 5, 8, 5000, 0, 0, 0, 0 };
@@ -106,6 +107,29 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log(roomDescriptions[index]);
+    }
+
+    void ShowRoom(int index, bool examine)
+    {
+        Debug.Log(roomNames[index]);
+        visited[index] = true;
+
+        roomCount += 1;
+        if ((roomCount % 3) == 0)
+        {
+            Debug.Log("As you enter, you notice the room is filled with a red glow");
+        }
+
+        Debug.Log(roomDescriptions[index]);
+        if (examine)
+        {
+            if (index == 4)
+            {
+                Debug.Log("You look ahead and see that the room exits to " + roomNames[index + 2]);
+            }
+            Debug.Log("You look ahead and see that the room exits to " + roomNames[index + 1]);
+            Debug.Log("You check the room, and see it has " + roomGold[index] + " gold in it");
+        }
     }
 
     void CombatRound(int enemyIndex)
