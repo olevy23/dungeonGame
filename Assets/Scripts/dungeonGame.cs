@@ -162,7 +162,7 @@ public class dungeonGame : MonoBehaviour
         }
         Debug.Log("You have " + health + " HP!");
 
-        if (health <= 0)
+        if (!IsAlive())
         {
             Debug.Log("You collapse to your sustained wounds");
             playerAlive = false;
@@ -220,6 +220,12 @@ public class dungeonGame : MonoBehaviour
             CombatRound(enemyIndex);
         }
     }
+
+    bool IsAlive()
+    {
+        return health > 0;
+    }
+
     void Start()
     {
 
@@ -377,9 +383,8 @@ public class dungeonGame : MonoBehaviour
             //}
         }
 
-        if(playerAlive == false)
+        if(!IsAlive())
         {
-            playerAlive = true;
             health = 1;
         }
         Debug.Log("You find " + roomGold[1] + " gold");
@@ -623,9 +628,8 @@ public class dungeonGame : MonoBehaviour
             //
             //}
         }
-        if (!playerAlive)
+        if (!IsAlive())
         {
-            playerAlive = true;
             health = 1;
         }
 
