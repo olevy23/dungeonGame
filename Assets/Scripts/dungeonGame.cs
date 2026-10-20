@@ -111,7 +111,7 @@ public class dungeonGame : MonoBehaviour
     void CombatRound(int enemyIndex)
     {
         Debug.Log("You attack the " + enemyNames[enemyIndex] + "!");
-        attackRoll = Random.Range(1, 21) + totalAttack;
+        attackRoll = RollDice() + totalAttack;
         Debug.Log("You attack with an attack roll of " + attackRoll + ".");
 
         if (attackRoll >= enemyArmorClass[enemyIndex])
@@ -139,7 +139,7 @@ public class dungeonGame : MonoBehaviour
         if (enemyHealth[enemyIndex] > 0)
         {
             Debug.Log("The " + enemyNames[enemyIndex] + " attacks you!");
-            int enemyRoll = Random.Range(1, 21);
+            int enemyRoll = RollDice();
             Debug.Log("The " + enemyNames[enemyIndex] + " attacks with an attack roll of " + enemyRoll + ".");
 
             if (enemyRoll >= armorClass)
@@ -231,7 +231,11 @@ public class dungeonGame : MonoBehaviour
         return gold += amount;
         
     }
-
+    
+    int RollDice()
+    {
+        return Random.Range(1, 21);
+    }
     void Start()
     {
 
