@@ -42,7 +42,7 @@ public class dungeonGame : MonoBehaviour
 
     int lowHealth = 4;
     int potionPrice = 30;
-    int healAmount = 20;
+    int healAmount = 10;
 
     string[] roomNames =
     {
@@ -251,7 +251,15 @@ public class dungeonGame : MonoBehaviour
             Debug.Log("You are wounded, but carry on");
         }
     }
-
+    
+    void Heal(int heal = 10)
+    {
+        health += heal;
+        if (health > maxHealth)
+        {
+            health = maxHealth;
+        }
+    }
     void Start()
     {
 
@@ -426,93 +434,6 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("An " + enemyNames[1] + " in the back of the room hears you enter, and charges at you!");
             Combat(1);
-
-            //for (int i = 1; ; i++)
-            //{
-            //    
-            //    Debug.Log("Turn " + i + ".");
-            //
-            //    if (i % 2 == 0)
-            //    {
-            //        Debug.Log("The " + enemyNames[1] + " struggles to regain its balance after its swing and cannot attack!");
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("The " + enemyNames[1] + " attacks you with its mighty club!");
-            //        ogreRoll = Random.Range(1, 21);
-            //        Debug.Log("The " + enemyNames[1] + " attacks with an attack roll of " + ogreRoll + ".");
-            //
-            //        if (ogreRoll >= armorClass)
-            //        {
-            //            if (ogreRoll == 20)
-            //            {
-            //                Debug.Log("The " + enemyNames[1] + " crits!");
-            //                health -= ((enemyAttack[1] * 2) - totalDefense);
-            //            }
-            //            else
-            //            {
-            //                Debug.Log("The " + enemyNames[1] + " hits!");
-            //                health -= (enemyAttack[1] - totalDefense);
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Debug.Log("The " + enemyNames[1] + " misses...");
-            //        }
-            //
-            //        Debug.Log("You have " + health + " HP!");
-            //
-            //        if (health <= 0)
-            //        {
-            //            Debug.Log("You collapse to your sustained wounds");
-            //            playerAlive = false;
-            //            break;
-            //        }
-            //        else if (health <= 5)
-            //        {
-            //            Debug.Log("You are badly wounded");
-            //        }
-            //        else if (health < 20)
-            //        {
-            //            Debug.Log("You are wounded, but carry on");
-            //        }
-            //    }
-            //    Debug.Log("You attack the " + enemyNames[1] + "!");
-            //    attackRoll = Random.Range(1, 21) + totalAttack;
-            //    Debug.Log("You attack with an attack roll of " + attackRoll + ".");
-            //
-            //    if (attackRoll >= enemyArmorClass[1])
-            //    {
-            //        if (attackRoll >= 20)
-            //        {
-            //            Debug.Log("You crit!");
-            //            enemyHealth[1] -= ((totalAttack * 2) - enemyDefense[1]);
-            //        }
-            //        else
-            //        {
-            //            Debug.Log("You hit!");
-            //            enemyHealth[1] -= (totalAttack - enemyDefense[1]);
-            //        }
-            //        if (enemyHealth[1] <= 0)
-            //        {
-            //            Debug.Log("You defeat the " + enemyNames[1] + "!");
-            //            break;
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Debug.Log("You miss...");
-            //    }
-            //
-            //    Debug.Log("The " + enemyNames[1] + " has " + enemyHealth[1] + " HP!");
-            //
-            //}
-            //
-            //if (playerAlive == false)
-            //{
-            //    playerAlive = true;
-            //    health = 1;
-            //}
         }
 
         Debug.Log("You find " + roomGold[currentRoom] + " gold");
@@ -669,10 +590,9 @@ public class dungeonGame : MonoBehaviour
         for(int i = 5; i > 0; i--)
         {
             Debug.Log("The fire will remain lit for " + i + " more turns.");
-            health += 2;
-            if (health >= maxHealth)
+            Heal(2);
+            if (health == maxHealth)
             {
-                health = maxHealth;
                 Debug.Log("As the warmth envelops you, you fully heal your wounds. Your HP is now " + health);
                 Debug.Log("Well rested, you put out the fire.");
                 break;
@@ -701,11 +621,7 @@ public class dungeonGame : MonoBehaviour
             currentRoom = 4;
             ShowRoom(currentRoom);
             Debug.Log("In a large alcove you find a cookfire with a large pot filled with bubbling stew. You eat from it to regain your strength.");
-            health += 3;
-            if (health >= maxHealth)
-            {
-                health = maxHealth;
-            }
+            Heal(10);
             Debug.Log("You find " + roomGold[currentRoom] + " gold");
             AddGold(roomGold[currentRoom]);
             Debug.Log("You have " + gold + " gold.");
