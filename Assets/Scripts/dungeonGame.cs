@@ -226,6 +226,12 @@ public class dungeonGame : MonoBehaviour
         return health > 0;
     }
 
+    int AddGold(int amount)
+    {
+        return gold += amount;
+        
+    }
+
     void Start()
     {
 
@@ -261,7 +267,8 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("Your agility increases to " + agility);
 
         Debug.Log("You find " + roomGold[0] + " gold");
-        gold += roomGold[0];
+        AddGold(roomGold[0]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
 
@@ -387,10 +394,10 @@ public class dungeonGame : MonoBehaviour
         {
             health = 1;
         }
-        Debug.Log("You find " + roomGold[1] + " gold");
-        gold += roomGold[1];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move to the next room.");
-
         Debug.Log("");
         //Debug.Log("The Troll Cave");
         currentRoom = 2;
@@ -488,8 +495,9 @@ public class dungeonGame : MonoBehaviour
             //}
         }
 
-        Debug.Log("You find " + roomGold[2] + " gold");
-        gold += roomGold[2];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
 
         currentRoom = 3;
         ShowRoom(currentRoom);
@@ -633,8 +641,9 @@ public class dungeonGame : MonoBehaviour
             health = 1;
         }
 
-        Debug.Log("You find " + roomGold[3] + " gold");
-        gold += roomGold[3];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
 
         Debug.Log("You find the remains of a small campfire someone left in the cave. You light it to rest from the grueling gauntlet of combat.");
         for(int i = 5; i > 0; i--)
@@ -653,7 +662,7 @@ public class dungeonGame : MonoBehaviour
             
         }
 
-        if (health <= 0)
+        if (!IsAlive())
         {
             Debug.Log("You collapse to your sustained wounds");
             playerAlive = false;
@@ -689,8 +698,9 @@ public class dungeonGame : MonoBehaviour
             {
                 health = maxHealth;
             }
-            Debug.Log("You find " + roomGold[4] + " gold");
-            gold += roomGold[4];
+            Debug.Log("You find " + roomGold[currentRoom] + " gold");
+            AddGold(roomGold[currentRoom]);
+            Debug.Log("You have " + gold + " gold.");
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
         else 
@@ -702,8 +712,9 @@ public class dungeonGame : MonoBehaviour
             currentRoom = 5;
             ShowRoom(currentRoom);
             Debug.Log("You check the chests for anything of use, but unfortunately find nothing that would aid your escape.");
-            Debug.Log("You find " + roomGold[5] + " gold");
-            gold += roomGold[5];
+            Debug.Log("You find " + roomGold[currentRoom] + " gold");
+            AddGold(roomGold[currentRoom]);
+            Debug.Log("You have " + gold + " gold.");
             Debug.Log("You exit the room. A short while later, the hall rejoins with the other path, and you continue onwards.");
         }
 
@@ -715,8 +726,9 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
         openInvSlot += 1;
         inventory[openInvSlot] += "key";
-        Debug.Log("You find " + roomGold[6] + " gold");
-        gold += roomGold[6];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
 
@@ -732,8 +744,9 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log(roomDescriptions[currentRoom]);
-        Debug.Log("You find " + roomGold[7] + " gold");
-        gold += roomGold[7];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
         Debug.Log("");
@@ -758,19 +771,19 @@ public class dungeonGame : MonoBehaviour
                 inventory[openInvSlot] += "rope";
                 break;
             }
-            if (i == inventory.Length - 1 && playerAlive)
+            if (i == inventory.Length - 1 && IsAlive())
             {
                 Debug.Log("You have no key for the chest");
             }
-            if (i == inventory.Length - 1 && !playerAlive)
+            if (i == inventory.Length - 1 && !IsAlive())
             {
                 Debug.Log("You unfortunately have collapsed to your wounds, and therefore don't have the strength to open the chest");
             }
         }
 
-        Debug.Log("You find " + roomGold[8] + " gold");
-        gold += roomGold[8];
-
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
         int potionCost = 5;
@@ -781,8 +794,9 @@ public class dungeonGame : MonoBehaviour
         ShowRoom(currentRoom);
         Debug.Log("The Merchant is selling health potions for " + potionCost + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
         Debug.Log("You can currently afford " + (gold / potionCost) + "potions, which would leave your coin purse with only " + (gold % potionCost) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
-        Debug.Log("You find " + roomGold[8] + " gold");
-        gold += roomGold[9];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         Debug.Log("You leave through an ornate door behind the Merchant's stall that you did not see upon entering.");
 
 
@@ -791,8 +805,9 @@ public class dungeonGame : MonoBehaviour
         currentRoom = 10;
         ShowRoom(currentRoom);
         Debug.Log("You see that the throne would make for a good point to secure a rope to.");
-        Debug.Log("You find " + roomGold[10] + " gold");
-        gold += roomGold[10];
+        Debug.Log("You find " + roomGold[currentRoom] + " gold");
+        AddGold(roomGold[currentRoom]);
+        Debug.Log("You have " + gold + " gold.");
         for (int i = 0; i < inventory.Length; i++)
         {
             if (inventory[i] == "rope")
