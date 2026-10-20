@@ -224,6 +224,16 @@ public class dungeonGame : MonoBehaviour
         return Random.Range(1, 21);
     }
 
+    int RollDice(int sides)
+    {
+        return Random.Range(1, (sides+1));
+    }
+
+    int RollDice(int min, int max)
+    {
+        return Random.Range(min, (max+1));
+    }
+
     void ReportCondition(int health)
     {
         if (!IsAlive())
