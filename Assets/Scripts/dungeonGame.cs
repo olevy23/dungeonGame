@@ -15,6 +15,7 @@ public class dungeonGame : MonoBehaviour
     string playerName = "Escapee";
     int health = 30;
     int maxHealth = 30;
+    int lowHealthThreshold = 4;
     int attack = 1;
     int defense = 1;
     int armorClass = 10;
@@ -40,12 +41,13 @@ public class dungeonGame : MonoBehaviour
 
     bool inCombat = false;
     int currentEnemy = 0;
-
+    int critRoll = 20;
+    int critModifier = 2;
     int lowHealth = 4;
     int potionPrice = 30;
     int healAmount = 10;
     int turnCount = 0;
-
+    int roomGlowCounter = 3;
     string[] roomNames =
     {
             "The Entrance Hall",
@@ -66,19 +68,20 @@ public class dungeonGame : MonoBehaviour
 
     string[] roomDescriptions =
     {
-            "A torch flickers on the wall. A stone doorway leads north.",
-            "A rusty sword rests on a table. A goblin snores in the corner.",
-            "You walk into a large cave littered with bones.",
-            "You walk into a cave, walls lined with thick layers of spider webs",
-            "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
-            "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
-            "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
-            "It seems this room has been raided.",
-            "This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.",
-            "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
-            "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
-        };
-    string[] inventory = { "", "", "", "", "", "", "", "", "", "", "" }; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak, plus contents of loot[]
+        "A torch flickers on the wall. A stone doorway leads north.",
+        "A rusty sword rests on a table. A goblin snores in the corner.",
+        "You walk into a large cave littered with bones.",
+        "You walk into a cave, walls lined with thick layers of spider webs",
+        "You enter a large hall. Tables with scattered seats fill the room, but it is devoid of inhabitants.",
+        "You enter a room lined with cots, clearly a communal living space for whoever runs this dungeon. At the foot of each cot is a small chest for storing personal belongings.",
+        "Ankle-deep water fills the hall. A broken door is at the end of the hallway.",
+        "It seems this room has been raided.",
+        "This room is filled with containers and storage racks for weapons and armor. Unfortunately, they are mostly empty, save for a small locked chest.",
+        "You enter a large room, more akin to a hallway. It is lined with stalls, but all are abandoned...save one. A hooded figure calls out to you, 'Potions for sale!'",
+        "A large dais with an imposing throne dominates the room, where the lord of this fortress presumably ruled from. 'Ruled,' as an oversized balista bolt has pierced the wall behind the throne and impaled its occupant.",
+        "You have exited the dungeon!"
+    };
+    string[] inventory = new string[11]; //inventory can contain rusted shortsword, polished sword, key, rope, torch, and cloak, plus contents of loot[]
 
     string[] enemyNames = { "goblin", "ogre", "spider" };
     int[] enemyHealth = { 15, 20, 20 };
@@ -88,8 +91,7 @@ public class dungeonGame : MonoBehaviour
 
     int[] roomEnemy = { -1, 0, 1, 2, -1, -1, -1, -1, -1, -1, -1 }; //index contains the enemy's index if room has an encounter, otherwise index is -1
 
-    bool[] visited = { false, false, false, false, false, false, false, false, false, false, false };
-
+    bool[] visited = new bool[11];
     string[] loot = { "big sword", "biggest sword", "super potion", "gleaming armor", "shoes" };
 
     void ShowTitle()
@@ -103,7 +105,7 @@ public class dungeonGame : MonoBehaviour
         visited[index] = true;
 
         roomCount += 1;
-        if ((roomCount % 3) == 0)
+        if ((roomCount % roomGlowCounter) == 0)
         {
             Debug.Log("As you enter, you notice the room is filled with a red glow");
         }
@@ -113,21 +115,24 @@ public class dungeonGame : MonoBehaviour
 
     void ShowRoom(int index, bool examine)
     {
+        Debug.Log("");
         Debug.Log(roomNames[index]);
-        visited[index] = true;
-
+        if (!visited[index])
+        {
+            visited[index] = true;
+            Debug.Log(roomDescriptions[index]);
+        }
         roomCount += 1;
-        if ((roomCount % 3) == 0)
+        if ((roomCount % roomGlowCounter) == 0)
         {
             Debug.Log("As you enter, you notice the room is filled with a red glow");
         }
 
-        Debug.Log(roomDescriptions[index]);
         if (examine)
-        {
-            if (index == 4)
-            {
-                Debug.Log("You look ahead and see that the room exits to " + roomNames[index + 2]);
+        {                                                                                           
+            if (index == 4)                                                                         //Temp solution to "looking ahead" to the room after the branching option of the barracks and the mess hall
+            {                                                                                       //
+                Debug.Log("You look ahead and see that the room exits to " + roomNames[index + 2]); //
             }
             Debug.Log("You look ahead and see that the room exits to " + roomNames[index + 1]);
             Debug.Log("You check the room, and see it has " + roomGold[index] + " gold in it");
@@ -144,10 +149,10 @@ public class dungeonGame : MonoBehaviour
 
         if (attackRoll >= enemyArmorClass[enemyIndex])
         {
-            if (attackRoll >= 20)
+            if (attackRoll >= critRoll)
             {
                 Debug.Log("You crit!");
-                enemyHealth[enemyIndex] -= ((totalAttack * 2) - enemyDefense[0]);
+                enemyHealth[enemyIndex] -= ((totalAttack * critModifier) - enemyDefense[enemyIndex]);
             }
             else
             {
@@ -172,10 +177,10 @@ public class dungeonGame : MonoBehaviour
 
             if (enemyRoll >= armorClass)
             {
-                if (enemyRoll == 20)
+                if (enemyRoll >= critRoll)
                 {
                     Debug.Log("The " + enemyNames[enemyIndex] + " crits!");
-                    health -= ((enemyAttack[0] * 2) - totalDefense);
+                    health -= ((enemyAttack[enemyIndex] * critModifier) - totalDefense);
                 }
                 else
                 {
@@ -275,7 +280,7 @@ public class dungeonGame : MonoBehaviour
             playerAlive = false;
             inCombat = false;
         }
-        else if (health <= (maxHealth / 4))
+        else if (health <= (maxHealth / lowHealthThreshold))
         {
             Debug.Log("You are badly wounded");
         }
@@ -314,13 +319,12 @@ public class dungeonGame : MonoBehaviour
         }
 
         Debug.Log("Starting Loot: " + loot[4]);
-        openInvSlot += 1;
+        openInvSlot++;
         inventory[openInvSlot] += loot[4];
 
         RemoveCoin(1);
         Debug.Log("You have " + cursedCoin + " cursed coins.");
 
-        Debug.Log("");
         //Debug.Log("The Entrance Hall");
         currentRoom = 0;
         ShowRoom(currentRoom);
@@ -342,12 +346,11 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You move into the next room.");
 
 
-        Debug.Log("");
         //Debug.Log("The Guard Room");
         currentRoom = 1;
         ShowRoom(currentRoom);
         Debug.Log("The goblin jolts awake, and seeing you, makes to charge you. You snatch up the sword in a panic and prepare to defend yourself.");
-        openInvSlot += 1;
+        openInvSlot++;
         inventory[openInvSlot] += "rusted shortsword";
 
         if (roomEnemy[currentRoom] != -1)
@@ -468,7 +471,7 @@ public class dungeonGame : MonoBehaviour
         AddGold(roomGold[currentRoom]);
         Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move to the next room.");
-        Debug.Log("");
+
         //Debug.Log("The Troll Cave");
         currentRoom = 2;
         ShowRoom(currentRoom);
@@ -661,7 +664,6 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("You decide to go down the left hall.");
 
-            Debug.Log("");
             //Debug.Log("The Mess Hall");
             currentRoom = 4;
             ShowRoom(currentRoom);
@@ -676,7 +678,6 @@ public class dungeonGame : MonoBehaviour
         {
             Debug.Log("You decide to go down the right hall.");
 
-            Debug.Log("");
             //Debug.Log("The Barracks");
             currentRoom = 5;
             ShowRoom(currentRoom);
@@ -688,12 +689,11 @@ public class dungeonGame : MonoBehaviour
         }
 
 
-        Debug.Log("");
         //Debug.Log("The Flooded Passage");
         currentRoom = 6;
         ShowRoom(currentRoom);
         Debug.Log("You walk towards the broken door, and trip over a large, rusty key. You pocket it before proceeding to the exit.");
-        openInvSlot += 1;
+        openInvSlot++;
         inventory[openInvSlot] += "key";
         Debug.Log("You find " + roomGold[currentRoom] + " gold");
         AddGold(roomGold[currentRoom]);
@@ -701,24 +701,15 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You move into the next room.");
 
 
-        Debug.Log("");
         //Debug.Log("The Treasure Room");
         currentRoom = 7;
         Debug.Log(roomNames[currentRoom]);
 
-        roomCount += 1;
-        if ((roomCount % 3) == 0)
-        {
-            Debug.Log("As you enter, you notice the room is filled with a red glow");
-        }
-
-        Debug.Log(roomDescriptions[currentRoom]);
         Debug.Log("You find " + roomGold[currentRoom] + " gold");
         AddGold(roomGold[currentRoom]);
         Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
-        Debug.Log("");
         //Debug.Log("The Armory");
         currentRoom = 8; 
         ShowRoom(currentRoom);
@@ -730,13 +721,13 @@ public class dungeonGame : MonoBehaviour
 
                 Debug.Log("You try the key in the chest's lock. It works!");
                 Debug.Log("You open the chest, revealing a polished sword, some rations, a cloak, and some rope. You take the contents in case they prove useful.");
-                openInvSlot += 1;
+                openInvSlot++;
                 inventory[openInvSlot] += "polished sword";
 
-                openInvSlot += 1;
+                openInvSlot++;
                 inventory[openInvSlot] += "cloak";
 
-                openInvSlot += 1;
+                openInvSlot++;
                 inventory[openInvSlot] += "rope";
                 break;
             }
@@ -755,21 +746,19 @@ public class dungeonGame : MonoBehaviour
         Debug.Log("You have " + gold + " gold.");
         Debug.Log("You move into the next room.");
 
-        int potionCost = 5;
-        // int potionCount = 0;
-        Debug.Log("");
+
+
         //Debug.Log("The Merchant's Room");
         currentRoom = 9;
         ShowRoom(currentRoom);
-        Debug.Log("The Merchant is selling health potions for " + potionCost + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
-        Debug.Log("You can currently afford " + (gold / potionCost) + "potions, which would leave your coin purse with only " + (gold % potionCost) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
+        Debug.Log("The Merchant is selling health potions for " + potionPrice + " gold apiece. You check your humble coinpurse, which currently has " + gold + " gold coins. You're uncertain if you have enough.");
+        Debug.Log("You can currently afford " + (gold / potionPrice) + "potions, which would leave your coin purse with only " + (gold % potionPrice) + " coins. Thinking better on it, you decline the mysterious merchant's offer. Better to be frugal.");
         Debug.Log("You find " + roomGold[currentRoom] + " gold");
         AddGold(roomGold[currentRoom]);
         Debug.Log("You have " + gold + " gold.");
         Debug.Log("You leave through an ornate door behind the Merchant's stall that you did not see upon entering.");
 
 
-        Debug.Log("");
         //Debug.Log("The Broken Throneroom");
         currentRoom = 10;
         ShowRoom(currentRoom);
@@ -800,141 +789,5 @@ public class dungeonGame : MonoBehaviour
             Debug.Log(item);
         }
         Debug.Log("You escape the dungeon with " + gold + " gold!");
-
-
-        // ===== BEFORE YOU START: move shared variables up to CLASS variables =====
-        // A variable declared inside Start() cannot be seen by your other methods.
-        // Any variable that more than one method needs must live at the TOP of the
-        // class (above Start), as a class variable (field). Move these out of Start()
-        // and declare them at class level:
-        //
-
-        //  Player stats:
-        //   playerName  (string)
-        //   health    (int)
-        //   maxHealth   (int)
-        //   attack    (int)
-        //   defense    (int)
-        //   gold     (int)
-        //
-
-        //  The map (from the Arrays homework):
-        //   roomNames   (string[])
-        //   roomDescs   (string[])
-        //   roomGold   (int[])
-        //   currentRoom  (int)
-        //
-
-        //  The enemies (from the Arrays homework):
-        //   enemyNames  (string[])
-        //   enemyHealth  (int[])
-        //   enemyAttack  (int[])
-        //   enemyDefense (int[])
-        //
-
-        //  The inventory (from the Arrays homework):
-        //   inventory   (string[])
-        //
-
-        //  Combat state (so a fight can run one round at a time later):
-        //   inCombat   (bool)
-        //   currentEnemy (int)
-        //
-
-        //  Tunable constants:
-        //   lowHealth   (const int) - the "badly wounded" cutoff
-        //   potionPrice  (const int)
-        //   healAmount  (const int) - the default amount a potion heals
-        //
-        // (If you followed the Arrays homework, the arrays are already class variables.
-        // You mainly need to lift the player stats, combat state, and constants up here.)
-
-
-        // ================= PART A: METHODS I (build in this order) =================
-
-
-        // A1: Write a method, ShowTitle(), that prints the game's title banner (it
-        //   takes nothing and returns nothing). Call it at the start of the game.
-
-
-        // A2: Write a method, ShowRoom(int index), that prints that room's name and
-        //   description from your arrays. Use it everywhere you print a room by hand,
-        //   and each time the player moves to a new room.
-
-
-        // A3: Split the fight into ONE round plus a loop that repeats it. (This makes it
-        //   painless to add player input later, when each round will run on a key
-        //   press instead of inside a loop.)
-        //
-
-        //   First write CombatRound(int enemyIndex): a SINGLE exchange using the
-        //   enemy's stats from your arrays. The player attacks the enemy (enemy health
-        //   drops by the player's attack); then, ONLY IF the enemy is still alive, it
-        //   attacks back (player health drops by the enemy's attack). Report the
-        //   round. If either side has run out of health, print the outcome and set
-        //   inCombat to false.
-        //
-
-        //   Then write Combat(int enemyIndex) as a thin wrapper that runs the whole
-        //   fight for now: set currentEnemy, set inCombat to true, then keep calling
-        //   CombatRound(enemyIndex) while inCombat is true. Call Combat in each
-        //   enemy's room - Combat(0) in the Goblin's Den, Combat(1) in the Ogre's
-        //   Lair, Combat(2) in the Spider's Vault. Your three copied fight blocks
-        //   become three one-line calls, and each enemy stays in its own room.
-        //
-
-        //   (Later, when we add input, we delete this loop and call CombatRound once
-        //   each time the player chooses to attack - the round method stays the same.)
-
-
-        // A4: Write a method, IsAlive(), that returns whether the hero is still alive
-        //   (health above 0). Use the value it returns to decide the ending.
-
-
-        // A5: Write a method, AddGold(int amount), that adds the amount to the player's
-        //   gold and hands back the new total. Print the value it returns.
-
-
-        // A6: Write a method, RollDice(), that returns a random number from 1 to 20. Use
-        //   what it returns in your combat or a skill check instead of calling
-        //   Random.Range in line.
-
-
-        // A7: Write a method, ReportCondition(int health), that prints the hero's
-        //   condition: fallen if no health remains, badly wounded if it is low,
-        //   otherwise steady. Call it right after the hero takes damage, anywhere in
-        //   the dungeon.
-
-
-        // ================= PART B: METHODS II =================
-
-
-        // B1: Overload RollDice from A6 (same name, different inputs). Add
-        //   RollDice(int sides) that returns a number from 1 to the sides you pass in,
-        //   and RollDice(int min, int max) that returns a number from min to max. Now
-        //   one name rolls a d20, any-sided die, or any range you need.
-
-
-        // B2: Give healing an optional amount, so Heal() restores a sensible default and
-        //   Heal(25) restores that much - all from one method. Keep the default in a
-        //   named value.
-
-
-        // B3: Make two ways to describe a room under one name (overloading): one that
-        //   prints just the short description, and one that takes an extra value for
-        //   "look closely" that also lists the room's exits and any item in it. Now
-        //   the player can glance or examine in detail.
-
-
-        // B4: Write a method that passes time in the dungeon for a number of turns,
-        //   defaulting to 1 turn when no number is given (think "wait" versus
-        //   "wait 3"). Report each turn that passes.
-
-
-        // B5: Write a method that takes a number - say a "cursed coins" amount -
-        //   subtracts from it INSIDE the method, and prints it there. Back in Start,
-        //   print the original variable afterward and notice it did NOT change: a
-        //   parameter is the method's own copy. Then make the change actually stick by
-        //   returning the new value (or using a field).
     }
 }
